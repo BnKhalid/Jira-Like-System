@@ -1,13 +1,9 @@
-import {
-  Entity,
-  PrimaryKey,
-  Property,
-  Collection,
-  OneToMany,
-} from '@mikro-orm/core';
+import { Entity, PrimaryKey, Property, Collection, OneToMany } from '@mikro-orm/core';
 import { v4 as uuidv4 } from 'uuid';
+import { compare } from 'bcrypt';
 import { Task } from '../task/task.entity';
-import { WorkspaceMember } from '../workspace-member/workspace-member.entity';
+import { WorkspaceMember } from '../workspace/workspace-member/workspace-member.entity';
+import { IsEmail } from 'class-validator';
 
 @Entity()
 export class User {
@@ -20,6 +16,7 @@ export class User {
   @Property({ unique: true })
   username!: string;
 
+  @IsEmail()
   @Property({ unique: true })
   email!: string;
 
@@ -37,4 +34,8 @@ export class User {
 
   @OneToMany(() => WorkspaceMember, (workspaceMember) => workspaceMember.user)
   workspaceMemberships = new Collection<WorkspaceMember>(this);
+
+  validatePassword(password: string): Promise<boolean> {
+    return compare(password, this.password);
+  }
 }

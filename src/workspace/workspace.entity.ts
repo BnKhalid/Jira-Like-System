@@ -6,8 +6,8 @@ import {
   OneToMany,
 } from '@mikro-orm/core';
 import { v4 as uuidv4 } from 'uuid';
-import { Sprint } from '../sprint/sprint.entity';
-import { WorkspaceMember } from '../workspace-member/workspace-member.entity';
+import { Sprint } from './sprint/sprint.entity';
+import { WorkspaceMember } from './workspace-member/workspace-member.entity';
 import { TrackedEntity } from '../common/entities/tracked.entity';
 
 @Entity()

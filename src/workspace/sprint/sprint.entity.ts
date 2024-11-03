@@ -8,9 +8,9 @@ import {
   OneToMany,
   Collection,
 } from '@mikro-orm/core';
-import { Workspace } from '../workspace/workspace.entity';
-import { BacklogTask } from '../backlog-task/backlog-task.entity';
-import { TrackedEntity } from '../common/entities/tracked.entity';
+import { Workspace } from '../workspace.entity';
+import { BacklogTask } from '../../task/backlog-task/backlog-task.entity';
+import { TrackedEntity } from '../../common/entities/tracked.entity';
 
 @Entity()
 export class Sprint extends TrackedEntity {
