@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, ParseUUIDPipe } from '@nestjs/common';
 import { WorkspaceService } from './workspace.service';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
@@ -32,13 +32,15 @@ export class WorkspaceController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<Workspace> {
+  findOne(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string
+  ): Promise<Workspace> {
     return this.workspaceService.findOne(id);
   }
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() updateWorkspaceDto: UpdateWorkspaceDto,
     @CurrentUser() user: UserClaims,
   ): Promise<Workspace> {
@@ -47,7 +49,7 @@ export class WorkspaceController {
 
   @Delete(':id')
   remove(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @CurrentUser() user: UserClaims,
   ): Promise<void> {
     return this.workspaceService.remove(id, user);

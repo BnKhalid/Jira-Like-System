@@ -22,7 +22,7 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
-  async signUp(signUpDto: SignUpDto): Promise<{ accessToken: string, refreshToken: string }> {
+  async signUp(signUpDto: SignUpDto): Promise<{ userId: string, accessToken: string, refreshToken: string }> {
     const userExists = await this.userRepository.findOne({
       $or: [{ email: signUpDto.email }, { username: signUpDto.username }],
     });
@@ -49,10 +49,10 @@ export class AuthService {
     
     const tokens = await this.generateAccessTokens(user.id);
 
-    return tokens;
+    return { userId: user.id, ...tokens};
   }
 
-  async signIn(signInDto: SignInDto): Promise<{ accessToken: string, refreshToken: string }> {
+  async signIn(signInDto: SignInDto): Promise<{ userId: string, accessToken: string, refreshToken: string }> {
     const user = await this.validateUser(signInDto.email, signInDto.password);
 
     if (!user) {
@@ -61,7 +61,7 @@ export class AuthService {
     
     const tokens = await this.generateAccessTokens(user.id);
 
-    return tokens;
+    return { userId: user.id, ...tokens };
   }
 
   async refresh(refreshTokenDto: RefreshTokenDto): Promise<{ accessToken: string, refreshToken: string }> {
