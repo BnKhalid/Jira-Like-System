@@ -24,7 +24,7 @@ export class WorkspaceService {
       workspaceMembers: [
         {
           user: { ...user },
-          role: WorkspaceMemberRoleEnum.Leader,
+          role: WorkspaceMemberRoleEnum.LEADER,
         },
       ],
     });
@@ -34,7 +34,7 @@ export class WorkspaceService {
     return workspace;
   }
 
-  async findAll(userId?: string): Promise<Workspace[]> {
+  findAll(userId?: string): Promise<Workspace[]> {
     if (userId) {
       return this.workspaceRepository.find(
         { workspaceMembers: { user: userId } },
@@ -46,10 +46,16 @@ export class WorkspaceService {
   }
 
   async findOne(id: string): Promise<Workspace> {
-    return this.workspaceRepository.findOne(
+    const workspace = await this.workspaceRepository.findOne(
       { id },
-      { populate: ['workspaceMembers'] },
+      { populate: ['workspaceMembers', 'tasks'] },
     );
+
+    if (!workspace) {
+      throw new NotFoundException(`Workspace with ID ${id} not found`);
+    }
+
+    return workspace;
   }
 
   async update(
@@ -59,17 +65,11 @@ export class WorkspaceService {
   ): Promise<Workspace> {
     const workspace = await this.findOne(id);
 
-    if (!workspace) {
-      throw new NotFoundException(`Workspace with ID ${id} not found`);
-    }
-
     if (!workspace.hasLeaderPermission(user.id)) {
       throw new UnauthorizedException(
         'You are not authorized to update this workspace',
       );
     }
-
-    workspace.updatedAt = new Date();
 
     this.workspaceRepository.assign(workspace, updateWorkspaceDto);
     await this.em.persistAndFlush(workspace);
@@ -78,9 +78,6 @@ export class WorkspaceService {
 
   async remove(id: string, user: UserClaims): Promise<void> {
     const workspace = await this.findOne(id);
-    if (!workspace) {
-      throw new NotFoundException(`Workspace with ID ${id} not found`);
-    }
 
     if (!workspace.hasLeaderPermission(user.id)) {
       throw new UnauthorizedException(

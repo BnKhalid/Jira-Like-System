@@ -3,12 +3,12 @@ import { WorkspaceMemberService } from './workspace-member.service';
 import { CreateWorkspaceMemberDto } from './dto/create-workspace-member.dto';
 import { UpdateWorkspaceMemberDto } from './dto/update-workspace-member.dto';
 import { WorkspaceMember } from './workspace-member.entity';
-import { CurrentUser } from 'src/auth/decorators/get-user.decorator';
-import { UserClaims } from 'src/auth/user-claims.interface';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { CurrentUser } from '../../auth/decorators/get-user.decorator';
+import { UserClaims } from '../../auth/user-claims.interface';
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
-@Controller('api/workspaces/:workspaceId/members/')
+@Controller('api/workspaces/:workspaceId/members')
 export class WorkspaceMemberController {
   constructor(
     private readonly workspaceMemberService: WorkspaceMemberService,

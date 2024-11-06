@@ -1,5 +1,5 @@
 export enum WorkspaceMemberRoleEnum {
-    Leader = 'Leader',
-    Admin = 'Admin',
-    Member = 'Member',
+    LEADER = 'Leader',
+    ADMIN = 'Admin',
+    MEMBER = 'Member',
 }

@@ -26,8 +26,8 @@ export class User {
   @Property()
   phone!: string;
 
-  @OneToMany(() => Task, (task) => task.user)
-  tasks = new Collection<Task>(this);
+  @OneToMany(() => Task, (task) => task.assignee)
+  assignedTasks = new Collection<Task>(this);
 
   @OneToMany(() => Task, (task) => task.reporter)
   reportedTasks = new Collection<Task>(this);

@@ -2,17 +2,15 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
-import { InjectRepository } from '@mikro-orm/nestjs';
-import { EntityRepository } from '@mikro-orm/core';
-import { User } from '../user/user.entity';
 import { validate as uuidValidate } from 'uuid';
+import { UserService } from '../user/user.service'
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private configService: ConfigService,
-    @InjectRepository(User)
-    private userRepository: EntityRepository<User>,
+    configService: ConfigService,
+    private userService: UserService
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -25,10 +23,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('Invalid token: malformed user ID');
     }
 
-    const user = await this.userRepository.findOne({ id: payload.sub });
+    let user: User;
     
-    if (!user) {
-      throw new UnauthorizedException('Invalid token');
+    try {
+      user = await this.userService.findOne(payload.sub);
+    }
+    catch (NotFoundException) {
+      throw new UnauthorizedException('Invalid token payload');
     }
 
     const userClaims = {

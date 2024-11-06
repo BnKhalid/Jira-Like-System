@@ -10,7 +10,7 @@ export class WorkspaceMember {
   id: string = uuidv4();
 
   @Property()
-  role = WorkspaceMemberRoleEnum.Member;
+  role = WorkspaceMemberRoleEnum.MEMBER;
 
   @ManyToOne(() => User)
   user!: User;

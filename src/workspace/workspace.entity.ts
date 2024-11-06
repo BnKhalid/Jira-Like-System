@@ -4,6 +4,7 @@ import { Sprint } from './sprint/sprint.entity';
 import { WorkspaceMember } from './workspace-member/workspace-member.entity';
 import { TrackedEntity } from '../common/entities/tracked.entity';
 import { WorkspaceMemberRoleEnum } from '../common/enums/workspace-member-role.enum';
+import { Task } from '../task/task.entity';
 
 @Entity()
 export class Workspace extends TrackedEntity {
@@ -16,7 +17,10 @@ export class Workspace extends TrackedEntity {
   @Property()
   key!: string;
 
-  @OneToMany(() => Sprint, (sprint) => sprint.workspace)
+  @OneToMany(
+    () => Sprint, (sprint) => sprint.workspace,
+    { cascade: [Cascade.REMOVE] }
+  )
   sprints = new Collection<Sprint>(this);
 
   @OneToMany(
@@ -26,17 +30,23 @@ export class Workspace extends TrackedEntity {
   )
   workspaceMembers = new Collection<WorkspaceMember>(this);
 
+  @OneToMany(
+    () => Task, task => task.workspace,
+    { cascade: [Cascade.REMOVE] }
+  )
+  tasks = new Collection<Task>(this);
+
   //#region Helper methods
   
   hasLeaderPermission(userId: string): boolean {
     return this.workspaceMembers.getItems().some(
-      (member) => member.user.id === userId && member.role === WorkspaceMemberRoleEnum.Leader
+      (member) => member.user.id === userId && member.role === WorkspaceMemberRoleEnum.LEADER
     );
   }
 
   hasAdminPermission(userId: string): boolean {
     return this.workspaceMembers.getItems().some(
-      (member) => member.user.id === userId && member.role !== WorkspaceMemberRoleEnum.Member
+      (member) => member.user.id === userId && member.role !== WorkspaceMemberRoleEnum.MEMBER
     );
   }
 
