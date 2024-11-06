@@ -8,6 +8,7 @@ import { UserClaims } from '../auth/user-claims.interface';
 import { WorkspaceService } from '../workspace/workspace.service';
 import { UserService } from '../user/user.service';
 import { TaskStatusEnum } from '../common/enums/task-status.enum';
+import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class TaskService {
@@ -32,25 +33,42 @@ export class TaskService {
       );
     }
 
-    const task = new Task();
+    if (!workspace.hasMemberPermission(createTaskDto.assigneeId)) {
+      throw new ForbiddenException('Assignee is not a member of the workspace');
+    }
 
-    task.type = createTaskDto.type;
-    task.status = createTaskDto.status;
-    task.summary = createTaskDto.summary;
-    task.description = createTaskDto.description;
-    task.workspace = workspace;
-    task.assignee = await this.userService.findOne(createTaskDto.assigneeId);
-    if (createTaskDto.reporterId) {
-      task.reporter = await this.userService.findOne(createTaskDto.reporterId);
+    let parentTask: Task | null;
+    if (createTaskDto.parentTaskId) {
+      parentTask = await this.findOne(workspaceId, createTaskDto.parentTaskId);
     }
     
-    this.em.persistAndFlush(task);
+    let reporter: User | null;
+    if (createTaskDto.reporterId) {
+      if (!workspace.hasMemberPermission(createTaskDto.reporterId)) {
+        throw new ForbiddenException(
+          'Reporter is not a member of the workspace',
+        );
+      }
+      reporter = await this.userService.findOne(createTaskDto.reporterId);
+    }
+
+    const assignee = await this.userService.findOne(createTaskDto.assigneeId);
+    
+    const task = this.taskRepository.create({
+      workspace,
+      parentTask,
+      reporter,
+      assignee,
+      ...createTaskDto,
+    });
+    
+    await this.em.persistAndFlush(task);
     
     return task;
   }
 
-  findAll(workspaceId: string): Promise<Task[]> {
-    return this.taskRepository.find(
+  async findAll(workspaceId: string): Promise<Task[]> {
+    return await this.taskRepository.find(
       { workspace: { id: workspaceId } },
       { populate: ['assignee'] }
     );
@@ -62,12 +80,12 @@ export class TaskService {
   ): Promise<Task> {
     const task = await this.taskRepository.findOne(
       { id: taskId, workspace: { id: workspaceId } },
-      { populate: ['assignee', 'outgoingLinks', 'incomingLinks'] }
+      { populate: ['assignee', 'reporter', 'outgoingLinks', 'incomingLinks'] }
     );
 
     if (!task) {
       throw new NotFoundException(
-        `Task with ID ${taskId} is not a member of the workspace`,
+        `Task with ID ${taskId} is not in this workspace`,
       );
     }
 
@@ -94,9 +112,28 @@ export class TaskService {
     task.status = updateTaskDto.status ?? TaskStatusEnum.TO_DO;
     task.summary = updateTaskDto.summary;
     task.description = updateTaskDto.description;
+
+    if (!workspace.hasMemberPermission(updateTaskDto.assigneeId)) {
+      throw new ForbiddenException('Assignee is not a member of the workspace');
+    }
     task.assignee = await this.userService.findOne(updateTaskDto.assigneeId);
+    
     if (updateTaskDto.reporterId) {
+      if (!workspace.hasMemberPermission(updateTaskDto.reporterId)) {
+        throw new ForbiddenException('Reporter is not a member of the workspace');
+      }
+
       task.reporter = await this.userService.findOne(updateTaskDto.reporterId);
+    }
+    else if (updateTaskDto.reporterId === null) {
+      task.reporter = null;
+    }
+
+    if (updateTaskDto.parentTaskId) {
+      task.parentTask = await this.findOne(workspaceId, updateTaskDto.parentTaskId);
+    }
+    else if (updateTaskDto.parentTaskId === null) {
+      task.parentTask = null;
     }
 
     await this.em.flush();
@@ -118,6 +155,16 @@ export class TaskService {
     }
 
     const task = await this.findOne(workspaceId, taskId);
+
+    const children = await this.taskRepository.find(
+      { parentTask: { id: taskId } }
+    );
+
+    for (const child of children) {
+      child.parentTask = null;
+
+      await this.em.removeAndFlush(child);
+    }
 
     await this.em.removeAndFlush(task);
   }

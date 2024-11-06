@@ -66,13 +66,16 @@ export class Task extends TrackedEntity {
       );
     }
 
-    if (
-      this.type === TaskTypeEnum.SUB_TASK &&
-      this.parentTask?.type === TaskTypeEnum.EPIC
-    ) {
-      throw new BadRequestException(
-        'Sub Task types cannot have an Epic type as a parent task.',
-      );
+    if (this.type === TaskTypeEnum.SUB_TASK) {
+      if (!this.parentTask) {
+        throw new BadRequestException('Sub Task must have a parent task.');
+      }
+      
+      if (this.parentTask?.type === TaskTypeEnum.EPIC) {
+        throw new BadRequestException(
+          'Sub Task types cannot have an Epic type as a parent task.',
+        );
+      }
     }
   }
 }

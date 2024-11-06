@@ -40,7 +40,7 @@ export class WorkspaceMemberService {
     const addedUser = await this.userService.findOne(memberId);
 
     const workspaceMember = this.em.create(WorkspaceMember, {
-      role: createWorkspaceMemberDto.role,
+      role: createWorkspaceMemberDto.role ?? WorkspaceMemberRoleEnum.MEMBER,
       user: addedUser,
       workspace,
     });
@@ -99,7 +99,7 @@ export class WorkspaceMemberService {
       throw new ForbiddenException('Cannot change workspace leader');
     }
 
-    workspaceMember.role = updateWorkspaceMemberDto.role;
+    workspaceMember.role = updateWorkspaceMemberDto.role ?? workspaceMember.role;
 
     await this.em.persistAndFlush(workspaceMember);
 

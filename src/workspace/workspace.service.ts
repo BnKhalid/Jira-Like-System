@@ -20,13 +20,13 @@ export class WorkspaceService {
     user: UserClaims,
   ): Promise<Workspace> {
     const workspace = this.workspaceRepository.create({
-      ...createWorkspaceDto,
       workspaceMembers: [
         {
-          user: { ...user },
+          user,
           role: WorkspaceMemberRoleEnum.LEADER,
         },
       ],
+      ...createWorkspaceDto,
     });
 
     await this.em.persistAndFlush(workspace);
@@ -34,15 +34,15 @@ export class WorkspaceService {
     return workspace;
   }
 
-  findAll(userId?: string): Promise<Workspace[]> {
+  async findAll(userId?: string): Promise<Workspace[]> {
     if (userId) {
-      return this.workspaceRepository.find(
+      return await this.workspaceRepository.find(
         { workspaceMembers: { user: userId } },
         { populate: ['workspaceMembers'] },
       );
     }
 
-    return this.workspaceRepository.findAll({ populate: ['workspaceMembers'] });
+    return await this.workspaceRepository.findAll({ populate: ['workspaceMembers'] });
   }
 
   async findOne(id: string): Promise<Workspace> {

@@ -18,36 +18,22 @@ export class UserService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const userExists = await this.userRepository.findOne({
-      $or: [
-        { email: createUserDto.email },
-        { username: createUserDto.username },
-      ],
-    });
-
-    if (userExists) {
-      throw new ConflictException('Username or email already exists');
-    }
+    await this.checkConflict(createUserDto.email, createUserDto.username);
 
     const saltRounds = Number(this.configService.get<string>('SALT_ROUNDS'));
     const salt = await genSalt(saltRounds);
     const hashedPassword = await hash(createUserDto.password, salt);
-
-    const user = new User();
-
-    user.name = createUserDto.name;
-    user.username = createUserDto.username;
-    user.email = createUserDto.email;
-    user.password = hashedPassword;
-    user.phone = createUserDto.phone;
+    createUserDto.password = hashedPassword;
+    
+    const user = this.userRepository.create(createUserDto);
 
     await this.em.persistAndFlush(user);
 
     return user;
   }
 
-  findAll(): Promise<User[]> {
-    return this.userRepository.findAll();
+  async findAll(): Promise<User[]> {
+    return await this.userRepository.findAll();
   }
 
   async findOne(id: string): Promise<User> {
@@ -61,21 +47,20 @@ export class UserService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    await this.checkConflict(updateUserDto.email, updateUserDto.username);
+
     const user = await this.findOne(id);
     
-    user.name = updateUserDto.name;
-    user.username = updateUserDto.username;
-    user.email = updateUserDto.email;
-    user.phone = updateUserDto.phone;
+    this.em.assign(user, updateUserDto);
 
-    this.em.persistAndFlush(user);
+    await this.em.persistAndFlush(user);
 
     return user;
   }
 
   async remove(id: string): Promise<void> {
     const user = await this.findOne(id);
-    this.em.removeAndFlush(user);
+    await this.em.removeAndFlush(user);
   }
 
   async validateUser(email: string, password: string): Promise<User> {
@@ -92,5 +77,19 @@ export class UserService {
     }
 
     return user;
+  }
+
+  private async checkConflict(email: string, username: string): Promise<void> {
+    const isEmailExists = await this.userRepository.findOne({ email });
+
+    if (isEmailExists) {
+      throw new ConflictException('Email already exists');
+    }
+
+    const isUsernameExists = await this.userRepository.findOne({ username });
+
+    if (isUsernameExists) {
+      throw new ConflictException('Username already exists');
+    }
   }
 }

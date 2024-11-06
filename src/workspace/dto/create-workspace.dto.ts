@@ -1,4 +1,11 @@
+import { IsNotEmpty, IsString } from "class-validator";
+
 export class CreateWorkspaceDto {
-  name: string;
-  key: string;
+  @IsNotEmpty()
+  @IsString()
+  name!: string;
+  
+  @IsNotEmpty()
+  @IsString()
+  key!: string;
 }
