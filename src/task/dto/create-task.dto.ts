@@ -1,6 +1,6 @@
 import { IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
-import { TaskTypeEnum } from "src/common/enums/task-type.enum";
-import { TaskStatusEnum } from "../../common/enums/task-status.enum"
+import { TaskTypeEnum } from '../../common/enums/task-type.enum';
+import { TaskStatusEnum } from '../../common/enums/task-status.enum';
 
 export class CreateTaskDto {
   @IsNotEmpty()

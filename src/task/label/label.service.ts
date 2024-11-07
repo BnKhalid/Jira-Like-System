@@ -7,7 +7,7 @@ import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/core';
 import { WorkspaceService } from '../../workspace/workspace.service';
 import { TaskService } from '../task.service';
-import { Workspace } from 'src/workspace/workspace.entity';
+import { Workspace } from '../../workspace/workspace.entity';
 
 @Injectable()
 export class LabelService {

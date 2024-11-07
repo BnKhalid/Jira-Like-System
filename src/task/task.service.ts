@@ -8,7 +8,7 @@ import { UserClaims } from '../auth/user-claims.interface';
 import { WorkspaceService } from '../workspace/workspace.service';
 import { UserService } from '../user/user.service';
 import { TaskStatusEnum } from '../common/enums/task-status.enum';
-import { User } from 'src/user/user.entity';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class TaskService {

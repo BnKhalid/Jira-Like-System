@@ -1,5 +1,5 @@
-import { IsEnum, IsOptional } from "class-validator";
-import { WorkspaceMemberRoleEnum } from "src/common/enums/workspace-member-role.enum";
+import { IsEnum, IsOptional } from 'class-validator';
+import { WorkspaceMemberRoleEnum } from '../../../common/enums/workspace-member-role.enum';
 
 export class CreateWorkspaceMemberDto {
   @IsOptional()
