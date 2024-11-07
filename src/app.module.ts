@@ -9,6 +9,7 @@ import { TaskModule } from './task/task.module';
 import { UserModule } from './user/user.module';
 import { TaskLinkModule } from './task/task-link/task-link.module';
 import { LabelModule } from './task/label/label.module';
+import { SprintModule } from './workspace/sprint/sprint.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { LabelModule } from './task/label/label.module';
     TaskModule,
     TaskLinkModule,
     LabelModule,
+    SprintModule,
   ],
   controllers: [],
   providers: [],

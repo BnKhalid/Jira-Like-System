@@ -1,21 +1,14 @@
-import {
-  Entity,
-  PrimaryKey,
-  Property,
-  BeforeCreate,
-  BeforeUpdate,
-  ManyToOne,
-  OneToMany,
-  Collection,
-} from '@mikro-orm/core';
+import { Entity, PrimaryKey, Property, BeforeCreate, BeforeUpdate, ManyToOne, OneToMany, Collection, Cascade } from '@mikro-orm/core';
+import { v4 as uuidv4 } from 'uuid';
 import { Workspace } from '../workspace.entity';
 import { BacklogTask } from '../../task/backlog-task/backlog-task.entity';
 import { TrackedEntity } from '../../common/entities/tracked.entity';
+import { ForbiddenException } from '@nestjs/common';
 
 @Entity()
 export class Sprint extends TrackedEntity {
-  @PrimaryKey({ autoincrement: true })
-  id!: number;
+  @PrimaryKey({ type: 'uuid' })
+  id: string = uuidv4();
 
   @Property()
   name!: string;
@@ -32,14 +25,17 @@ export class Sprint extends TrackedEntity {
   @ManyToOne(() => Workspace)
   workspace!: Workspace;
 
-  @OneToMany(() => BacklogTask, (backlogTask) => backlogTask.sprint)
-  backlogTasks = new Collection<BacklogTask>(this);
+  @OneToMany(
+    () => BacklogTask, (backlogTask) => backlogTask.sprint,
+    { cascade: [Cascade.REMOVE] }
+  )
+  backlog = new Collection<BacklogTask>(this);
 
   @BeforeCreate()
   @BeforeUpdate()
   validateDates() {
     if (this.startDate >= this.endDate) {
-      throw new Error('Start date must be before end date.');
+      throw new ForbiddenException('End date must be after start date');
     }
   }
 }

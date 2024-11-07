@@ -18,20 +18,22 @@ export class Workspace extends TrackedEntity {
   key!: string;
 
   @OneToMany(
-    () => Sprint, (sprint) => sprint.workspace,
+    () => Sprint,
+    sprint => sprint.workspace,
     { cascade: [Cascade.REMOVE] }
   )
   sprints = new Collection<Sprint>(this);
 
   @OneToMany(
     () => WorkspaceMember,
-    (workspaceMember) => workspaceMember.workspace,
+    workspaceMember => workspaceMember.workspace,
     { cascade: [Cascade.REMOVE] }
   )
   workspaceMembers = new Collection<WorkspaceMember>(this);
 
   @OneToMany(
-    () => Task, task => task.workspace,
+    () => Task,
+    task => task.workspace,
     { cascade: [Cascade.REMOVE] }
   )
   tasks = new Collection<Task>(this);

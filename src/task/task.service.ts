@@ -37,12 +37,12 @@ export class TaskService {
       throw new ForbiddenException('Assignee is not a member of the workspace');
     }
 
-    let parentTask: Task | null;
+    let parentTask: Task;
     if (createTaskDto.parentTaskId) {
       parentTask = await this.findOne(workspaceId, createTaskDto.parentTaskId);
     }
     
-    let reporter: User | null;
+    let reporter: User;
     if (createTaskDto.reporterId) {
       if (!workspace.hasMemberPermission(createTaskDto.reporterId)) {
         throw new ForbiddenException(
