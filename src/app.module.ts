@@ -10,6 +10,7 @@ import { UserModule } from './user/user.module';
 import { TaskLinkModule } from './task/task-link/task-link.module';
 import { LabelModule } from './task/label/label.module';
 import { SprintModule } from './workspace/sprint/sprint.module';
+import { BacklogTaskModule } from './task/backlog-task/backlog-task.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { SprintModule } from './workspace/sprint/sprint.module';
     TaskLinkModule,
     LabelModule,
     SprintModule,
+    BacklogTaskModule,
   ],
   controllers: [],
   providers: [],

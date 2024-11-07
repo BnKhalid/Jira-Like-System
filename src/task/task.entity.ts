@@ -47,7 +47,10 @@ export class Task extends TrackedEntity {
   )
   incomingLinks = new Collection<TaskLink>(this);
 
-  @ManyToMany(() => Label)
+  @ManyToMany(
+    () => Label, (link) => link.tasks,
+    { cascade: [Cascade.REMOVE] }
+  )
   labels = new Collection<Label>(this);
 
   @ManyToOne(() => Workspace)

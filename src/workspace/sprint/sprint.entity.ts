@@ -26,7 +26,8 @@ export class Sprint extends TrackedEntity {
   workspace!: Workspace;
 
   @OneToMany(
-    () => BacklogTask, (backlogTask) => backlogTask.sprint,
+    () => BacklogTask,
+    (backlogTask) => backlogTask.sprint,
     { cascade: [Cascade.REMOVE] }
   )
   backlog = new Collection<BacklogTask>(this);

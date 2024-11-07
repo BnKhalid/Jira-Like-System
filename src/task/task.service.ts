@@ -70,7 +70,7 @@ export class TaskService {
   async findAll(workspaceId: string): Promise<Task[]> {
     return await this.taskRepository.find(
       { workspace: { id: workspaceId } },
-      { populate: ['assignee', 'labels'] }
+      { populate: ['assignee', 'labels', 'incomingLinks', 'outgoingLinks', 'labels'] }
     );
   }
 
@@ -163,7 +163,7 @@ export class TaskService {
     for (const child of children) {
       child.parentTask = null;
 
-      await this.em.removeAndFlush(child);
+      this.em.remove(child);
     }
 
     await this.em.removeAndFlush(task);

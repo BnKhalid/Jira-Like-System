@@ -527,15 +527,6 @@
     },
     {
       "columns": {
-        "task_id": {
-          "name": "task_id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "uuid"
-        },
         "label_label_content": {
           "name": "label_label_content",
           "type": "varchar(255)",
@@ -545,16 +536,25 @@
           "nullable": false,
           "length": 255,
           "mappedType": "string"
+        },
+        "task_id": {
+          "name": "task_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "uuid"
         }
       },
-      "name": "task_labels",
+      "name": "label_tasks",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "task_labels_pkey",
+          "keyName": "label_tasks_pkey",
           "columnNames": [
-            "task_id",
-            "label_label_content"
+            "label_label_content",
+            "task_id"
           ],
           "composite": true,
           "constraint": true,
@@ -564,29 +564,29 @@
       ],
       "checks": [],
       "foreignKeys": {
-        "task_labels_task_id_foreign": {
-          "constraintName": "task_labels_task_id_foreign",
-          "columnNames": [
-            "task_id"
-          ],
-          "localTableName": "public.task_labels",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "public.task",
-          "deleteRule": "cascade",
-          "updateRule": "cascade"
-        },
-        "task_labels_label_label_content_foreign": {
-          "constraintName": "task_labels_label_label_content_foreign",
+        "label_tasks_label_label_content_foreign": {
+          "constraintName": "label_tasks_label_label_content_foreign",
           "columnNames": [
             "label_label_content"
           ],
-          "localTableName": "public.task_labels",
+          "localTableName": "public.label_tasks",
           "referencedColumnNames": [
             "label_content"
           ],
           "referencedTableName": "public.label",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        },
+        "label_tasks_task_id_foreign": {
+          "constraintName": "label_tasks_task_id_foreign",
+          "columnNames": [
+            "task_id"
+          ],
+          "localTableName": "public.label_tasks",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.task",
           "deleteRule": "cascade",
           "updateRule": "cascade"
         }
@@ -718,12 +718,14 @@
         },
         "priority": {
           "name": "priority",
-          "type": "int",
+          "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "integer"
+          "length": 255,
+          "default": "'Medium'",
+          "mappedType": "string"
         },
         "story_point_estimate": {
           "name": "story_point_estimate",
@@ -740,7 +742,7 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "mappedType": "uuid"
         },
         "sprint_id": {
@@ -789,7 +791,7 @@
             "id"
           ],
           "referencedTableName": "public.task",
-          "updateRule": "cascade"
+          "deleteRule": "cascade"
         },
         "backlog_task_sprint_id_foreign": {
           "constraintName": "backlog_task_sprint_id_foreign",

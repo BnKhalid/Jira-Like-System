@@ -6,6 +6,6 @@ export class Label {
   @PrimaryKey()
   labelContent!: string;
 
-  @ManyToMany(() => Task, (task) => task.labels, { mappedBy: 'labels' })
+  @ManyToMany(() => Task)
   tasks = new Collection<Task>(this);
 }

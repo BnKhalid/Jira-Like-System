@@ -8,11 +8,11 @@ import { UserClaims } from '../../auth/user-claims.interface';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
-@Controller('api/workspaces/:workspaceId')
+@Controller('api/workspaces/:workspaceId/sprints')
 export class SprintController {
   constructor(private sprintService: SprintService) {}
 
-  @Post('sprints')
+  @Post()
   create(
     @Param('workspaceId', new ParseUUIDPipe({ version: '4' })) workspaceId: string,
     @Body() createSprintDto: CreateSprintDto,
@@ -21,14 +21,14 @@ export class SprintController {
     return this.sprintService.create(workspaceId, createSprintDto, user);
   }
 
-  @Get('sprints')
+  @Get()
   findAll(
     @Param('workspaceId', new ParseUUIDPipe({ version: '4' })) workspaceId: string
   ): Promise<Sprint[]> {
     return this.sprintService.findAll(workspaceId);
   }
 
-  @Get('sprints/:sprintId')
+  @Get(':sprintId')
   findOne(
     @Param('workspaceId', new ParseUUIDPipe({ version: '4' })) workspaceId: string,
     @Param('sprintId', new ParseUUIDPipe({ version: '4' })) sprintId: string
@@ -36,7 +36,7 @@ export class SprintController {
     return this.sprintService.findOne(workspaceId, sprintId);
   }
 
-  @Patch('sprints/:sprintId')
+  @Patch(':sprintId')
   update(
     @Param('workspaceId', new ParseUUIDPipe({ version: '4' })) workspaceId: string,
     @Param('sprintId', new ParseUUIDPipe({ version: '4' })) sprintId: string,
@@ -46,7 +46,7 @@ export class SprintController {
     return this.sprintService.update(workspaceId, sprintId, updateSprintDto, user);
   }
 
-  @Delete('sprints/:sprintId')
+  @Delete(':sprintId')
   remove(
     @Param('workspaceId', new ParseUUIDPipe({ version: '4' })) workspaceId: string,
     @Param('sprintId', new ParseUUIDPipe({ version: '4' })) sprintId: string,
