@@ -11,7 +11,7 @@ import { UserClaims } from '../auth/user-claims.interface';
 @UseGuards(JwtAuthGuard)
 @Controller('api/workspaces')
 export class WorkspaceController {
-  constructor(private readonly workspaceService: WorkspaceService) {}
+  constructor(private workspaceService: WorkspaceService) {}
 
   @Post()
   create(

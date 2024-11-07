@@ -6,17 +6,8 @@
   "tables": [
     {
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "unsigned": false,
-          "autoincrement": true,
-          "primary": true,
-          "nullable": false,
-          "mappedType": "integer"
-        },
-        "name": {
-          "name": "name",
+        "label_content": {
+          "name": "label_content",
           "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
@@ -32,7 +23,7 @@
         {
           "keyName": "label_pkey",
           "columnNames": [
-            "id"
+            "label_content"
           ],
           "composite": false,
           "constraint": true,
@@ -545,14 +536,15 @@
           "nullable": false,
           "mappedType": "uuid"
         },
-        "label_id": {
-          "name": "label_id",
-          "type": "int",
+        "label_label_content": {
+          "name": "label_label_content",
+          "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "integer"
+          "length": 255,
+          "mappedType": "string"
         }
       },
       "name": "task_labels",
@@ -562,7 +554,7 @@
           "keyName": "task_labels_pkey",
           "columnNames": [
             "task_id",
-            "label_id"
+            "label_label_content"
           ],
           "composite": true,
           "constraint": true,
@@ -585,14 +577,14 @@
           "deleteRule": "cascade",
           "updateRule": "cascade"
         },
-        "task_labels_label_id_foreign": {
-          "constraintName": "task_labels_label_id_foreign",
+        "task_labels_label_label_content_foreign": {
+          "constraintName": "task_labels_label_label_content_foreign",
           "columnNames": [
-            "label_id"
+            "label_label_content"
           ],
           "localTableName": "public.task_labels",
           "referencedColumnNames": [
-            "id"
+            "label_content"
           ],
           "referencedTableName": "public.label",
           "deleteRule": "cascade",

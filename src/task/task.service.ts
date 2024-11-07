@@ -70,7 +70,7 @@ export class TaskService {
   async findAll(workspaceId: string): Promise<Task[]> {
     return await this.taskRepository.find(
       { workspace: { id: workspaceId } },
-      { populate: ['assignee'] }
+      { populate: ['assignee', 'labels'] }
     );
   }
 
@@ -80,7 +80,7 @@ export class TaskService {
   ): Promise<Task> {
     const task = await this.taskRepository.findOne(
       { id: taskId, workspace: { id: workspaceId } },
-      { populate: ['assignee', 'reporter', 'outgoingLinks', 'incomingLinks'] }
+      { populate: ['assignee', 'reporter', 'outgoingLinks', 'incomingLinks', 'labels'] }
     );
 
     if (!task) {

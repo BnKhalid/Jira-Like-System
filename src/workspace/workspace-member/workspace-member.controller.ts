@@ -11,7 +11,7 @@ import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 @Controller('api/workspaces/:workspaceId/members')
 export class WorkspaceMemberController {
   constructor(
-    private readonly workspaceMemberService: WorkspaceMemberService,
+    private workspaceMemberService: WorkspaceMemberService,
   ) {}
 
   @Post(':memberId')

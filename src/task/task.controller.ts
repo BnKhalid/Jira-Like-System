@@ -10,7 +10,7 @@ import { Task } from './task.entity';
 @UseGuards(JwtAuthGuard)
 @Controller('api/workspaces/:workspaceId/tasks')
 export class TaskController {
-  constructor(private readonly taskService: TaskService) {}
+  constructor(private taskService: TaskService) {}
 
   @Post()
   create(

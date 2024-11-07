@@ -1,4 +1,4 @@
-import { Entity, PrimaryKey, Property, ManyToOne, OneToMany, Collection, BeforeCreate, BeforeUpdate, ManyToMany, Cascade,} from '@mikro-orm/core';
+import { Entity, PrimaryKey, Property, ManyToOne, OneToMany, Collection, BeforeCreate, BeforeUpdate, ManyToMany, Cascade } from '@mikro-orm/core';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from '../user/user.entity';
 import { Label } from './label/label.entity';

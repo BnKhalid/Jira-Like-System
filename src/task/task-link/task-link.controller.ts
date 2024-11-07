@@ -10,7 +10,7 @@ import { UserClaims } from '../../auth/user-claims.interface';
 @UseGuards(JwtAuthGuard)
 @Controller('api/workspaces/:workspaceId/tasks/:taskId/links')
 export class TaskLinkController {
-  constructor(private readonly taskLinkService: TaskLinkService) {}
+  constructor(private taskLinkService: TaskLinkService) {}
 
   @Post()
   create(

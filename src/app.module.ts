@@ -8,6 +8,7 @@ import { WorkspaceMemberModule } from './workspace/workspace-member/workspace-me
 import { TaskModule } from './task/task.module';
 import { UserModule } from './user/user.module';
 import { TaskLinkModule } from './task/task-link/task-link.module';
+import { LabelModule } from './task/label/label.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { TaskLinkModule } from './task/task-link/task-link.module';
     UserModule,
     TaskModule,
     TaskLinkModule,
+    LabelModule,
   ],
   controllers: [],
   providers: [],

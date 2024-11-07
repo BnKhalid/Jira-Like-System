@@ -1,4 +1,4 @@
-import {Entity, PrimaryKey, Property, Collection, OneToMany, Cascade,} from '@mikro-orm/core';
+import { Entity, PrimaryKey, Property, Collection, OneToMany, Cascade } from '@mikro-orm/core';
 import { v4 as uuidv4 } from 'uuid';
 import { Sprint } from './sprint/sprint.entity';
 import { WorkspaceMember } from './workspace-member/workspace-member.entity';
