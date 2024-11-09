@@ -2,11 +2,11 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { BacklogTask } from './backlog-task.entity';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/core';
-import { WorkspaceService } from '../../workspace/workspace.service';
-import { SprintService } from '../../workspace/sprint/sprint.service';
-import { TaskService } from '../task.service';
+import { WorkspaceService } from '../../worksapce/workspace.service';
+import { SprintService } from '../sprint/sprint.service';
+import { TaskService } from '../../../task/task/task.service';
 import { CreateBacklogTaskDto } from './dto/create-backlog-task.dto';
-import { UserClaims } from '../../auth/user-claims.interface';
+import { UserClaims } from '../../../auth/user-claims.interface';
 import { UpdateBacklogTaskDto } from './dto/update-backlog-task.dto';
 
 @Injectable()

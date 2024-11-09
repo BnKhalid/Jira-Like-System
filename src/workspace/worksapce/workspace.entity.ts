@@ -1,10 +1,10 @@
 import { Entity, PrimaryKey, Property, Collection, OneToMany, Cascade } from '@mikro-orm/core';
 import { v4 as uuidv4 } from 'uuid';
-import { Sprint } from './sprint/sprint.entity';
-import { WorkspaceMember } from './workspace-member/workspace-member.entity';
-import { TrackedEntity } from '../common/entities/tracked.entity';
-import { WorkspaceMemberRoleEnum } from '../common/enums/workspace-member-role.enum';
-import { Task } from '../task/task.entity';
+import { Sprint } from '../sprint/sprint/sprint.entity'
+import { WorkspaceMember } from '../workspace-member/workspace-member.entity';
+import { TrackedEntity } from '../../common/entities/tracked.entity';
+import { WorkspaceMemberRoleEnum } from '../../common/enums/workspace-member-role.enum';
+import { Task } from '../../task/task/task.entity';
 
 @Entity()
 export class Workspace extends TrackedEntity {

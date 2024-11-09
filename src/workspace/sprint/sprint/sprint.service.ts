@@ -2,10 +2,10 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateSprintDto } from './dto/create-sprint.dto';
 import { UpdateSprintDto } from './dto/update-sprint.dto';
 import { Sprint } from './sprint.entity';
-import { UserClaims } from '../../auth/user-claims.interface';
+import { UserClaims } from '../../../auth/user-claims.interface';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/core';
-import { WorkspaceService } from '../workspace.service';
+import { WorkspaceService } from '../../worksapce/workspace.service';
 
 @Injectable()
 export class SprintService {

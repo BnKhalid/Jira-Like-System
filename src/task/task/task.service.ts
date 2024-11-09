@@ -4,11 +4,11 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { Task } from './task.entity';
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
-import { UserClaims } from '../auth/user-claims.interface';
-import { WorkspaceService } from '../workspace/workspace.service';
-import { UserService } from '../user/user.service';
-import { TaskStatusEnum } from '../common/enums/task-status.enum';
-import { User } from '../user/user.entity';
+import { UserClaims } from '../../auth/user-claims.interface';
+import { WorkspaceService } from '../../workspace/worksapce/workspace.service';
+import { UserService } from '../../user/user.service';
+import { TaskStatusEnum } from '../../common/enums/task-status.enum';
+import { User } from '../../user/user.entity';
 
 @Injectable()
 export class TaskService {

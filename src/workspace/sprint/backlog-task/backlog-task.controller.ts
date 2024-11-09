@@ -2,9 +2,9 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseUUID
 import { BacklogTaskService } from './backlog-task.service';
 import { CreateBacklogTaskDto } from './dto/create-backlog-task.dto';
 import { UpdateBacklogTaskDto } from './dto/update-backlog-task.dto';
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
-import { CurrentUser } from '../../auth/decorators/get-user.decorator';
-import { UserClaims } from '../../auth/user-claims.interface';
+import { JwtAuthGuard } from '../../../auth/jwt-auth.guard';
+import { CurrentUser } from '../../../auth/decorators/get-user.decorator';
+import { UserClaims } from '../../../auth/user-claims.interface';
 
 @UseGuards(JwtAuthGuard)
 @Controller('api/workspaces/:workspaceId/sprints/:sprintId/backlog-tasks')

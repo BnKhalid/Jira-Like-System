@@ -4,8 +4,8 @@ import { EntityManager, EntityRepository } from '@mikro-orm/core';
 import { Workspace } from './workspace.entity';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
-import { UserClaims } from '../auth/user-claims.interface';
-import { WorkspaceMemberRoleEnum } from '../common/enums/workspace-member-role.enum';
+import { UserClaims } from '../../auth/user-claims.interface';
+import { WorkspaceMemberRoleEnum } from '../../common/enums/workspace-member-role.enum';
 
 @Injectable()
 export class WorkspaceService {

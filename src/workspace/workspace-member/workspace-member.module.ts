@@ -3,7 +3,7 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { WorkspaceMemberController } from './workspace-member.controller';
 import { WorkspaceMemberService } from './workspace-member.service';
 import { WorkspaceMember } from './workspace-member.entity';
-import { WorkspaceModule } from '../workspace.module';
+import { WorkspaceModule } from '../worksapce/workspace.module';
 import { UserModule } from '../../user/user.module';
 
 @Module({

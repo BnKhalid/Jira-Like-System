@@ -3,9 +3,9 @@ import { BacklogTaskService } from './backlog-task.service';
 import { BacklogTaskController } from './backlog-task.controller';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { BacklogTask } from './backlog-task.entity';
-import { SprintModule } from '../../workspace/sprint/sprint.module';
-import { TaskModule } from '../task.module';
-import { WorkspaceModule } from '../../workspace/workspace.module';
+import { SprintModule } from '../sprint/sprint.module';
+import { TaskModule } from '../../../task/task/task.module';
+import { WorkspaceModule } from '../../worksapce/workspace.module';
 
 @Module({
   imports: [

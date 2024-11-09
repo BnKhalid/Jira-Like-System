@@ -1,13 +1,13 @@
 import { Entity, PrimaryKey, Property, ManyToOne, OneToMany, Collection, BeforeCreate, BeforeUpdate, ManyToMany, Cascade } from '@mikro-orm/core';
 import { v4 as uuidv4 } from 'uuid';
-import { User } from '../user/user.entity';
-import { Label } from './label/label.entity';
-import { TaskLink } from './task-link/task-link.entity';
-import { TaskTypeEnum } from '../common/enums/task-type.enum';
-import { TaskStatusEnum } from '../common/enums/task-status.enum';
-import { TrackedEntity } from '../common/entities/tracked.entity';
+import { User } from '../../user/user.entity';
+import { Label } from '../label/label.entity';
+import { TaskLink } from '../task-link/task-link.entity';
+import { TaskTypeEnum } from '../../common/enums/task-type.enum';
+import { TaskStatusEnum } from '../../common/enums/task-status.enum';
+import { TrackedEntity } from '../../common/entities/tracked.entity';
 import { BadRequestException } from '@nestjs/common';
-import { Workspace } from '../workspace/workspace.entity';
+import { Workspace } from '../../workspace/worksapce/workspace.entity';
 
 @Entity()
 export class Task extends TrackedEntity {

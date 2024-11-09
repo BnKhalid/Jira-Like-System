@@ -5,9 +5,9 @@ import { InjectRepository } from '@mikro-orm/nestjs';
 import { TaskLink } from './task-link.entity';
 import { EntityRepository, t } from '@mikro-orm/core';
 import { EntityManager } from '@mikro-orm/postgresql';
-import { TaskService } from '../task.service';
+import { TaskService } from '../task/task.service';
 import { TaskLinkTypeEnum } from '../../common/enums/task-link-type.enum';
-import { WorkspaceService } from '../../workspace/workspace.service';
+import { WorkspaceService } from '../../workspace/worksapce/workspace.service';
 import { UserClaims } from '../../auth/user-claims.interface';
 
 @Injectable()

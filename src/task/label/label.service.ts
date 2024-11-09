@@ -5,9 +5,9 @@ import { Label } from './label.entity';
 import { UserClaims } from '../../auth/user-claims.interface';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/core';
-import { WorkspaceService } from '../../workspace/workspace.service';
-import { TaskService } from '../task.service';
-import { Workspace } from '../../workspace/workspace.entity';
+import { WorkspaceService } from '../../workspace/worksapce/workspace.service';
+import { TaskService } from '../task/task.service';
+import { Workspace } from '../../workspace/worksapce/workspace.entity';
 
 @Injectable()
 export class LabelService {

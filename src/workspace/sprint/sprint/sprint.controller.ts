@@ -3,9 +3,9 @@ import { SprintService } from './sprint.service'
 import { CreateSprintDto } from './dto/create-sprint.dto';
 import { UpdateSprintDto } from './dto/update-sprint.dto';
 import { Sprint } from './sprint.entity';
-import { CurrentUser } from '../../auth/decorators/get-user.decorator';
-import { UserClaims } from '../../auth/user-claims.interface';
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
+import { CurrentUser } from '../../../auth/decorators/get-user.decorator';
+import { UserClaims } from '../../../auth/user-claims.interface';
+import { JwtAuthGuard } from '../../../auth/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
 @Controller('api/workspaces/:workspaceId/sprints')

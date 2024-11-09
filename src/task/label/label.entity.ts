@@ -1,5 +1,5 @@
 import { Entity, PrimaryKey, ManyToMany, Collection } from '@mikro-orm/core';
-import { Task } from '../task.entity';
+import { Task } from '../task/task.entity';
 
 @Entity()
 export class Label {

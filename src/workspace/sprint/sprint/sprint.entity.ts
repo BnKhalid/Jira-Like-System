@@ -1,8 +1,8 @@
 import { Entity, PrimaryKey, Property, BeforeCreate, BeforeUpdate, ManyToOne, OneToMany, Collection, Cascade } from '@mikro-orm/core';
 import { v4 as uuidv4 } from 'uuid';
-import { Workspace } from '../workspace.entity';
-import { BacklogTask } from '../../task/backlog-task/backlog-task.entity';
-import { TrackedEntity } from '../../common/entities/tracked.entity';
+import { Workspace } from '../../worksapce/workspace.entity';
+import { BacklogTask } from '../../sprint/backlog-task/backlog-task.entity';
+import { TrackedEntity } from '../../../common/entities/tracked.entity';
 import { ForbiddenException } from '@nestjs/common';
 
 @Entity()

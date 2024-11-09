@@ -2,9 +2,9 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseUUID
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { CurrentUser } from '../auth/decorators/get-user.decorator';
-import { UserClaims } from '../auth/user-claims.interface';
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
+import { CurrentUser } from '../../auth/decorators/get-user.decorator';
+import { UserClaims } from '../../auth/user-claims.interface';
 import { Task } from './task.entity';
 
 @UseGuards(JwtAuthGuard)
