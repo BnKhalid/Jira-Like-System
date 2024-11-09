@@ -6,7 +6,7 @@ import { BacklogTaskPriorityEnum } from '../../../common/enums/backlog-task-prio
 
 @Entity()
 export class BacklogTask {
-  @PrimaryKey({ type: 'uuid' })
+  @PrimaryKey()
   id: string = uuidv4();
 
   @Property()

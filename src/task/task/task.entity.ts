@@ -11,7 +11,7 @@ import { Workspace } from '../../workspace/worksapce/workspace.entity';
 
 @Entity()
 export class Task extends TrackedEntity {
-  @PrimaryKey({ type: 'uuid' })
+  @PrimaryKey()
   id: string = uuidv4();
 
   @Property()

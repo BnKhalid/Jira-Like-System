@@ -7,7 +7,7 @@ import { BadRequestException } from '@nestjs/common';
 
 @Entity()
 export class Sprint extends TrackedEntity {
-  @PrimaryKey({ type: 'uuid' })
+  @PrimaryKey()
   id: string = uuidv4();
 
   @Property()

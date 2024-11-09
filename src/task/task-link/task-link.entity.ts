@@ -5,7 +5,7 @@ import { TaskLinkTypeEnum } from '../../common/enums/task-link-type.enum';
 
 @Entity()
 export class TaskLink {
-  @PrimaryKey({ type: 'uuid' })
+  @PrimaryKey()
   id: string = uuidv4();
 
   @Property()

@@ -7,6 +7,8 @@ import { JwtService } from '@nestjs/jwt';
 import { RefreshToken } from './refresh-token.entity';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { UserService } from '../user/user.service';
+import { ConfigService } from '@nestjs/config';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +17,8 @@ export class AuthService {
     private refreshTokenRepository: EntityRepository<RefreshToken>,
     private em: EntityManager,
     private jwtService: JwtService,
-    private userService: UserService
+    private userService: UserService,
+    private configService: ConfigService
   ) {}
 
   async signUp(signUpDto: SignUpDto): Promise<{ userId: string, accessToken: string, refreshToken: string }> {
@@ -41,8 +44,19 @@ export class AuthService {
   async refresh(refreshTokenDto: RefreshTokenDto): Promise<{ accessToken: string, refreshToken: string }> {
     const token = await this.refreshTokenRepository.findOne({ token: refreshTokenDto.refreshToken });
 
-    if (!token || token.expiresAt < new Date()) {
-      throw new UnauthorizedException('Invalid refresh token');
+    let payload: JwtPayload;
+    
+    try {
+      payload = await this.jwtService.verifyAsync(refreshTokenDto.refreshToken);
+    }
+    catch {
+      throw new UnauthorizedException('Invalid Tokens');
+    }
+
+    const currentTimestamp = Math.floor(Date.now() / 1000);
+
+    if (payload.exp < currentTimestamp) {
+      throw new UnauthorizedException('Expired refresh token');
     }
 
     const tokens = await this.generateAccessTokens(token.userId);
@@ -59,9 +73,13 @@ export class AuthService {
       await this.em.removeAndFlush(existingToken);
     }
 
-    const refreshToken = new RefreshToken();
-    refreshToken.userId = userId;
-    refreshToken.expiresAt.setDate(new Date().getDate() + 3);
+    const refreshToken = this.refreshTokenRepository.create({
+      userId,
+      token: await this.jwtService.signAsync(
+        { sub: userId },
+        { expiresIn: this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRES_IN') },
+      ),
+    });
 
     await this.em.persistAndFlush(refreshToken);
 

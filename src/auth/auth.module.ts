@@ -12,11 +12,11 @@ import { UserModule } from '../user/user.module';
   imports: [
     MikroOrmModule.forFeature([RefreshToken]),
     JwtModule.registerAsync({
-      imports: [ConfigModule, UserModule],
+      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: configService.get<string>('JWT_EXPIRES_IN') },
+        signOptions: { expiresIn: configService.get<string>('JWT_ACCESS_TOKEN_EXPIRES_IN') },
       }),
     }),
     UserModule,

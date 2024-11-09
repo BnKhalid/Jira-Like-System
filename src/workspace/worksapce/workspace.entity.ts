@@ -8,7 +8,7 @@ import { Task } from '../../task/task/task.entity';
 
 @Entity()
 export class Workspace extends TrackedEntity {
-  @PrimaryKey({ type: 'uuid' })
+  @PrimaryKey()
   id: string = uuidv4();
 
   @Property()

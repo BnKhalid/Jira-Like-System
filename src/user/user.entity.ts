@@ -7,7 +7,7 @@ import { IsEmail } from 'class-validator';
 
 @Entity()
 export class User {
-  @PrimaryKey({ type: 'uuid' })
+  @PrimaryKey()
   id: string = uuidv4();
 
   @Property()

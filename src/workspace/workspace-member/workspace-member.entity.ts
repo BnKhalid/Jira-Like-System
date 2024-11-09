@@ -6,7 +6,7 @@ import { WorkspaceMemberRoleEnum } from '../../common/enums/workspace-member-rol
 
 @Entity()
 export class WorkspaceMember {
-  @PrimaryKey({ type: 'uuid' })
+  @PrimaryKey()
   id: string = uuidv4();
 
   @Property()

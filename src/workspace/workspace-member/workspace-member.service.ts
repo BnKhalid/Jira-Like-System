@@ -4,7 +4,7 @@ import { UpdateWorkspaceMemberDto } from './dto/update-workspace-member.dto';
 import { WorkspaceMember } from './workspace-member.entity';
 import { EntityManager, EntityRepository } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { UserClaims } from '../../auth/user-claims.interface';
+import { UserClaims } from '../../auth/interfaces/user-claims.interface';
 import { WorkspaceMemberRoleEnum } from '../../common/enums/workspace-member-role.enum';
 import { WorkspaceService } from '../worksapce/workspace.service';
 import { UserService } from '../../user/user.service';

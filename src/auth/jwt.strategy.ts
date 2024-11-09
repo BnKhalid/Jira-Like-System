@@ -2,9 +2,10 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
-import { validate as uuidValidate } from 'uuid';
 import { UserService } from '../user/user.service'
 import { User } from '../user/user.entity';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { UserClaims } from './interfaces/user-claims.interface';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -18,11 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: any) {
-    if (!uuidValidate(payload.sub)) {
-      throw new UnauthorizedException('Invalid token: malformed user ID');
-    }
-
+  async validate(payload: JwtPayload): Promise<UserClaims> {
     let user: User;
     
     try {
@@ -32,13 +29,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('Invalid token payload');
     }
 
-    const userClaims = {
+    return {
       id: user.id,
       name: user.name,
       username: user.username,
       email: user.email,
-    }
-
-    return userClaims;
+    };
   }
 }

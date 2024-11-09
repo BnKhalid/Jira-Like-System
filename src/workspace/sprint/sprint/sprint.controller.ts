@@ -1,11 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { SprintService } from './sprint.service'
 import { CreateSprintDto } from './dto/create-sprint.dto';
 import { UpdateSprintDto } from './dto/update-sprint.dto';
 import { Sprint } from './sprint.entity';
 import { CurrentUser } from '../../../auth/decorators/get-user.decorator';
-import { UserClaims } from '../../../auth/user-claims.interface';
-import { JwtAuthGuard } from '../../../auth/jwt-auth.guard';
+import { UserClaims } from '../../../auth/interfaces/user-claims.interface';
+import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
 @Controller('api/workspaces/:workspaceId/sprints')
@@ -14,7 +14,7 @@ export class SprintController {
 
   @Post()
   create(
-    @Param('workspaceId', new ParseUUIDPipe({ version: '4' })) workspaceId: string,
+    @Param('workspaceId') workspaceId: string,
     @Body() createSprintDto: CreateSprintDto,
     @CurrentUser() user: UserClaims
   ): Promise<Sprint> {
@@ -23,23 +23,23 @@ export class SprintController {
 
   @Get()
   findAll(
-    @Param('workspaceId', new ParseUUIDPipe({ version: '4' })) workspaceId: string
+    @Param('workspaceId') workspaceId: string
   ): Promise<Sprint[]> {
     return this.sprintService.findAll(workspaceId);
   }
 
   @Get(':sprintId')
   findOne(
-    @Param('workspaceId', new ParseUUIDPipe({ version: '4' })) workspaceId: string,
-    @Param('sprintId', new ParseUUIDPipe({ version: '4' })) sprintId: string
+    @Param('workspaceId') workspaceId: string,
+    @Param('sprintId') sprintId: string
   ): Promise<Sprint> {
     return this.sprintService.findOne(workspaceId, sprintId);
   }
 
   @Patch(':sprintId')
   update(
-    @Param('workspaceId', new ParseUUIDPipe({ version: '4' })) workspaceId: string,
-    @Param('sprintId', new ParseUUIDPipe({ version: '4' })) sprintId: string,
+    @Param('workspaceId') workspaceId: string,
+    @Param('sprintId') sprintId: string,
     @Body() updateSprintDto: UpdateSprintDto,
     @CurrentUser() user: UserClaims
   ): Promise<Sprint> {
@@ -48,8 +48,8 @@ export class SprintController {
 
   @Delete(':sprintId')
   remove(
-    @Param('workspaceId', new ParseUUIDPipe({ version: '4' })) workspaceId: string,
-    @Param('sprintId', new ParseUUIDPipe({ version: '4' })) sprintId: string,
+    @Param('workspaceId') workspaceId: string,
+    @Param('sprintId') sprintId: string,
     @CurrentUser() user: UserClaims
   ): Promise<void> {
     return this.sprintService.remove(workspaceId, sprintId, user);

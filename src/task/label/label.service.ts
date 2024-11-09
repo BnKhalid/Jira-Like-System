@@ -2,7 +2,7 @@ import { BadRequestException, ForbiddenException, Injectable, NotFoundException 
 import { CreateLabelDto } from './dto/create-label.dto';
 import { UpdateLabelDto } from './dto/update-label.dto';
 import { Label } from './label.entity';
-import { UserClaims } from '../../auth/user-claims.interface';
+import { UserClaims } from '../../auth/interfaces/user-claims.interface';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/core';
 import { WorkspaceService } from '../../workspace/worksapce/workspace.service';

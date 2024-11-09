@@ -6,7 +6,7 @@ import { WorkspaceService } from '../../worksapce/workspace.service';
 import { SprintService } from '../sprint/sprint.service';
 import { TaskService } from '../../../task/task/task.service';
 import { CreateBacklogTaskDto } from './dto/create-backlog-task.dto';
-import { UserClaims } from '../../../auth/user-claims.interface';
+import { UserClaims } from '../../../auth/interfaces/user-claims.interface';
 import { UpdateBacklogTaskDto } from './dto/update-backlog-task.dto';
 
 @Injectable()

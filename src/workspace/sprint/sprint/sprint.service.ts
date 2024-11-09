@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { CreateSprintDto } from './dto/create-sprint.dto';
 import { UpdateSprintDto } from './dto/update-sprint.dto';
 import { Sprint } from './sprint.entity';
-import { UserClaims } from '../../../auth/user-claims.interface';
+import { UserClaims } from '../../../auth/interfaces/user-claims.interface';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/core';
 import { WorkspaceService } from '../../worksapce/workspace.service';

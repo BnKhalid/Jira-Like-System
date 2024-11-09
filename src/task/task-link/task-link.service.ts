@@ -8,7 +8,7 @@ import { EntityManager } from '@mikro-orm/postgresql';
 import { TaskService } from '../task/task.service';
 import { TaskLinkTypeEnum } from '../../common/enums/task-link-type.enum';
 import { WorkspaceService } from '../../workspace/worksapce/workspace.service';
-import { UserClaims } from '../../auth/user-claims.interface';
+import { UserClaims } from '../../auth/interfaces/user-claims.interface';
 
 @Injectable()
 export class TaskLinkService {
