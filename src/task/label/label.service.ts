@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateLabelDto } from './dto/create-label.dto';
 import { UpdateLabelDto } from './dto/update-label.dto';
 import { Label } from './label.entity';
@@ -38,7 +38,7 @@ export class LabelService {
     const existingLabel = task.labels.getItems().find(label => label.labelContent === createLabelDto.labelContent);
 
     if (existingLabel) {
-      throw new ForbiddenException('Label already exists for this task');
+      throw new BadRequestException('Label already exists for this task');
     }
 
     let label = await this.tryGetLabel(workspace, createLabelDto.labelContent);
@@ -97,7 +97,7 @@ export class LabelService {
       { labelContent: updateLabelDto.labelContent, tasks: { workspace } }
     );
     if (existingLabel) {
-      throw new ForbiddenException('Label already exists');
+      throw new BadRequestException('Label already exists');
     }
 
     const label = await this.findOne(workspaceId, labelContent);

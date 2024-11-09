@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/core';
 import { Workspace } from './workspace.entity';
@@ -66,7 +66,7 @@ export class WorkspaceService {
     const workspace = await this.findOne(id);
 
     if (!workspace.hasLeaderPermission(user.id)) {
-      throw new UnauthorizedException(
+      throw new ForbiddenException(
         'You are not authorized to update this workspace',
       );
     }
@@ -80,7 +80,7 @@ export class WorkspaceService {
     const workspace = await this.findOne(id);
 
     if (!workspace.hasLeaderPermission(user.id)) {
-      throw new UnauthorizedException(
+      throw new ForbiddenException(
         'You are not authorized to delete this workspace',
       );
     }

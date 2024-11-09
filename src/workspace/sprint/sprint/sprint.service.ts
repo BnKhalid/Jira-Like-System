@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSprintDto } from './dto/create-sprint.dto';
 import { UpdateSprintDto } from './dto/update-sprint.dto';
 import { Sprint } from './sprint.entity';
@@ -56,7 +56,7 @@ export class SprintService {
     );
 
     if (!sprint) {
-      throw new ForbiddenException(
+      throw new NotFoundException(
         `Sprint with id ${sprintId} does not exist in workspace with id ${workspaceId}`
       );
     }

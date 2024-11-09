@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateWorkspaceMemberDto } from './dto/create-workspace-member.dto';
 import { UpdateWorkspaceMemberDto } from './dto/update-workspace-member.dto';
 import { WorkspaceMember } from './workspace-member.entity';
@@ -92,11 +92,11 @@ export class WorkspaceMemberService {
     const workspaceMember = await this.findOne(workspaceId, userId);
 
     if (workspaceMember.role === WorkspaceMemberRoleEnum.LEADER) {
-      throw new ForbiddenException('Cannot update the role of a leader');
+      throw new BadRequestException('Cannot update the role of a leader');
     }
 
     if (updateWorkspaceMemberDto.role === WorkspaceMemberRoleEnum.LEADER) {
-      throw new ForbiddenException('Cannot change workspace leader');
+      throw new BadRequestException('Cannot change workspace leader');
     }
 
     workspaceMember.role = updateWorkspaceMemberDto.role ?? workspaceMember.role;
@@ -132,7 +132,7 @@ export class WorkspaceMemberService {
     }
 
     if (workspaceMember.role === WorkspaceMemberRoleEnum.LEADER) {
-      throw new ForbiddenException('Cannot remove the leader of the workspace');
+      throw new BadRequestException('Cannot remove the leader of the workspace');
     }
     else {
       await this.em.removeAndFlush(workspaceMember);

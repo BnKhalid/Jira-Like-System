@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { BacklogTask } from './backlog-task.entity';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/core';
@@ -68,7 +68,7 @@ export class BacklogTaskService {
     );
 
     if (!backlogTask) {
-      throw new ForbiddenException(
+      throw new NotFoundException(
         `Backlog task with id ${backlogId} does not exist in sprint with id ${sprintId} in workspace with id ${workspaceId}`
       );
     }

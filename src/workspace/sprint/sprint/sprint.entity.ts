@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Workspace } from '../../worksapce/workspace.entity';
 import { BacklogTask } from '../../sprint/backlog-task/backlog-task.entity';
 import { TrackedEntity } from '../../../common/entities/tracked.entity';
-import { ForbiddenException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 
 @Entity()
 export class Sprint extends TrackedEntity {
@@ -36,7 +36,7 @@ export class Sprint extends TrackedEntity {
   @BeforeUpdate()
   validateDates() {
     if (this.startDate >= this.endDate) {
-      throw new ForbiddenException('End date must be after start date');
+      throw new BadRequestException('End date must be after start date');
     }
   }
 }

@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskLinkDto } from './dto/create-task-link.dto'
 import { UpdateTaskLinkDto } from './dto/update-task-link.dto';
 import { InjectRepository } from '@mikro-orm/nestjs';
@@ -42,7 +42,7 @@ export class TaskLinkService {
     );
 
     if (existingTaskLink) {
-      throw new ForbiddenException(
+      throw new BadRequestException(
         `Task link between task ${sourceTask.id} and task ${targetTask.id} already exists`,
       );
     }
