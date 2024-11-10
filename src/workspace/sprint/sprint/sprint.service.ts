@@ -36,7 +36,7 @@ export class SprintService {
   ): Promise<Sprint[]> {
     return await this.sprintRepository.find(
       { workspace: { id: workspaceId } },
-      { populate: ['backlog'] }
+      { populate: ['sprintTasks'] }
     );
   }
 
@@ -46,7 +46,7 @@ export class SprintService {
   ): Promise<Sprint> {
     const sprint = await this.sprintRepository.findOne(
       { id: sprintId, workspace: { id: workspaceId } },
-      { populate: ['backlog'] }
+      { populate: ['sprintTasks'] }
     );
 
     if (!sprint) {

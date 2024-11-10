@@ -1,7 +1,7 @@
 import { Entity, PrimaryKey, Property, BeforeCreate, BeforeUpdate, ManyToOne, OneToMany, Collection, Cascade } from '@mikro-orm/core';
 import { v4 as uuidv4 } from 'uuid';
 import { Workspace } from '../../worksapce/workspace.entity';
-import { BacklogTask } from '../../sprint/backlog-task/backlog-task.entity';
+import { SprintTask } from '../sprint-task/sprint-task.entity';
 import { TrackedEntity } from '../../../common/entities/tracked.entity';
 import { BadRequestException } from '@nestjs/common';
 
@@ -26,11 +26,11 @@ export class Sprint extends TrackedEntity {
   workspace!: Workspace;
 
   @OneToMany(
-    () => BacklogTask,
-    (backlogTask) => backlogTask.sprint,
+    () => SprintTask,
+    (sprintTask) => sprintTask.sprint,
     { cascade: [Cascade.REMOVE] }
   )
-  backlog = new Collection<BacklogTask>(this);
+  sprintTasks = new Collection<SprintTask>(this);
 
   @BeforeCreate()
   @BeforeUpdate()

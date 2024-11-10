@@ -764,7 +764,7 @@
           "mappedType": "string"
         }
       },
-      "name": "backlog_task",
+      "name": "sprint_task",
       "schema": "public",
       "indexes": [
         {
@@ -772,13 +772,13 @@
             "task_id"
           ],
           "composite": false,
-          "keyName": "backlog_task_task_id_unique",
+          "keyName": "sprint_task_task_id_unique",
           "constraint": true,
           "primary": false,
           "unique": true
         },
         {
-          "keyName": "backlog_task_pkey",
+          "keyName": "sprint_task_pkey",
           "columnNames": [
             "id"
           ],
@@ -790,24 +790,24 @@
       ],
       "checks": [],
       "foreignKeys": {
-        "backlog_task_task_id_foreign": {
-          "constraintName": "backlog_task_task_id_foreign",
+        "sprint_task_task_id_foreign": {
+          "constraintName": "sprint_task_task_id_foreign",
           "columnNames": [
             "task_id"
           ],
-          "localTableName": "public.backlog_task",
+          "localTableName": "public.sprint_task",
           "referencedColumnNames": [
             "id"
           ],
           "referencedTableName": "public.task",
           "deleteRule": "cascade"
         },
-        "backlog_task_sprint_id_foreign": {
-          "constraintName": "backlog_task_sprint_id_foreign",
+        "sprint_task_sprint_id_foreign": {
+          "constraintName": "sprint_task_sprint_id_foreign",
           "columnNames": [
             "sprint_id"
           ],
-          "localTableName": "public.backlog_task",
+          "localTableName": "public.sprint_task",
           "referencedColumnNames": [
             "id"
           ],

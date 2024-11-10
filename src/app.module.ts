@@ -10,7 +10,7 @@ import { UserModule } from './user/user.module';
 import { TaskLinkModule } from './task/task-link/task-link.module';
 import { LabelModule } from './task/label/label.module';
 import { SprintModule } from './workspace/sprint/sprint/sprint.module';
-import { BacklogTaskModule } from './workspace/sprint/backlog-task/backlog-task.module';
+import { SprintTaskModule } from './workspace/sprint/sprint-task/sprint-task.module';
 import { RolesGuard } from './auth/guards/roles.guard';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
@@ -27,7 +27,7 @@ import { APP_GUARD } from '@nestjs/core';
     TaskLinkModule,
     LabelModule,
     SprintModule,
-    BacklogTaskModule,
+    SprintTaskModule,
   ],
   controllers: [],
   providers: [

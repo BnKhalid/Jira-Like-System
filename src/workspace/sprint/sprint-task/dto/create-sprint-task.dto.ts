@@ -1,7 +1,7 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsUUID } from 'class-validator';
-import { BacklogTaskPriorityEnum } from '../../../../common/enums/backlog-task-priority.enum';
+import { SprintTaskPriorityEnum } from '../../../../common/enums/sprint-task-priority.enum';
 
-export class CreateBacklogTaskDto {
+export class CreateSprintTaskDto {
   @IsNotEmpty()
   @IsUUID()
   taskId: string;
@@ -11,6 +11,6 @@ export class CreateBacklogTaskDto {
   storyPointEstimate: number;
 
   @IsOptional()
-  @IsEnum(BacklogTaskPriorityEnum)
-  priority: BacklogTaskPriorityEnum;
+  @IsEnum(SprintTaskPriorityEnum)
+  priority: SprintTaskPriorityEnum;
 }
