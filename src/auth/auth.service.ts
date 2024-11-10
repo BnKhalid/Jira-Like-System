@@ -9,6 +9,7 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { UserService } from '../user/user.service';
 import { ConfigService } from '@nestjs/config';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { UserSession } from './interfaces/user-session.interface';
 
 @Injectable()
 export class AuthService {
@@ -21,28 +22,28 @@ export class AuthService {
     private configService: ConfigService
   ) {}
 
-  async signUp(signUpDto: SignUpDto): Promise<{ userId: string, accessToken: string, refreshToken: string }> {
+  async signUp(signUpDto: SignUpDto): Promise<UserSession> {
     const user = await this.userService.create(signUpDto);
     
-    const tokens = await this.generateAccessTokens(user.id);
-
-    return { userId: user.id, ...tokens };
+    return await this.generateAccessTokens(user.id);
   }
 
-  async signIn(signInDto: SignInDto): Promise<{ userId: string, accessToken: string, refreshToken: string }> {
+  async signIn(signInDto: SignInDto): Promise<UserSession> {
     const user = await this.userService.validateUser(signInDto.email, signInDto.password);
 
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
     
-    const tokens = await this.generateAccessTokens(user.id);
-
-    return { userId: user.id, ...tokens };
+    return await this.generateAccessTokens(user.id);
   }
 
-  async refresh(refreshTokenDto: RefreshTokenDto): Promise<{ accessToken: string, refreshToken: string }> {
+  async refresh(refreshTokenDto: RefreshTokenDto): Promise<UserSession> {
     const token = await this.refreshTokenRepository.findOne({ token: refreshTokenDto.refreshToken });
+
+    if (!token) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
 
     let payload: JwtPayload;
     
@@ -59,12 +60,10 @@ export class AuthService {
       throw new UnauthorizedException('Expired refresh token');
     }
 
-    const tokens = await this.generateAccessTokens(token.userId);
-
-    return tokens;
+    return await this.generateAccessTokens(token.userId);
   }
 
-  private async generateAccessTokens(userId: string): Promise<{ accessToken: string, refreshToken: string }> {
+  private async generateAccessTokens(userId: string): Promise<UserSession> {
     const accessToken = await this.jwtService.signAsync({ sub: userId });
 
     const existingToken = await this.refreshTokenRepository.findOne({ userId });
@@ -83,6 +82,6 @@ export class AuthService {
 
     await this.em.persistAndFlush(refreshToken);
 
-    return { accessToken, refreshToken: refreshToken.token };
+    return { id: userId, accessToken, refreshToken: refreshToken.token };
   }
 }
