@@ -33,7 +33,7 @@ export class RolesGuard implements CanActivate {
       case Role.LEADER:
         return true;
       case Role.ADMIN:
-        return roles.some(role => role !== Role.MEMBER);
+        return roles.some(role => role !== Role.LEADER);
       case Role.MEMBER:
         return roles.some(role => role === Role.MEMBER);
       default:

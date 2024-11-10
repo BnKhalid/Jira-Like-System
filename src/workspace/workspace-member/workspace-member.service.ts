@@ -8,6 +8,7 @@ import { UserClaims } from '../../auth/interfaces/user-claims.interface';
 import { Role } from '../../common/enums/role.enum';
 import { WorkspaceService } from '../worksapce/workspace.service';
 import { UserService } from '../../user/user.service';
+import { TaskService } from '../../task/task/task.service';
 
 @Injectable()
 export class WorkspaceMemberService {
@@ -17,6 +18,7 @@ export class WorkspaceMemberService {
     private em: EntityManager,
     private userService: UserService,
     private workspaceService: WorkspaceService,
+    private taskService: TaskService,
   ) {}
 
   async create(
@@ -99,22 +101,24 @@ export class WorkspaceMemberService {
 
     const workspaceMember = await this.findOne(workspaceId, userId);
 
-    if (userId === user.id) {
+    if (userId === user.id) { // User is leaving the workspace
       if (user.roles.get(workspaceId) === Role.LEADER) {
         this.workspaceService.remove(workspaceId);
       }
       else {
         await this.em.removeAndFlush(workspaceMember);
       }
-      return;
     }
-
-    if (workspaceMember.role === Role.LEADER) {
-      throw new BadRequestException('Cannot remove the leader of the workspace');
+    else { // Admin is removing a user
+      if (workspaceMember.role === Role.LEADER) {
+        throw new BadRequestException('Cannot remove the leader of the workspace');
+      }
+      else {
+        await this.em.removeAndFlush(workspaceMember);
+      }
     }
-    else {
-      await this.em.removeAndFlush(workspaceMember);
-    }
+    
+    await this.taskService.removeUserRelations(workspaceId, userId);
   }
 
   async getRoles(userId: string): Promise<Map<string, Role>> {

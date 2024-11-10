@@ -44,7 +44,15 @@ export class TaskService {
       reporter = await this.userService.findOne(createTaskDto.reporterId);
     }
 
-    const assignee = await this.userService.findOne(createTaskDto.assigneeId);
+    let assignee: User;
+    if (createTaskDto.assigneeId) {
+      if (!workspace.workspaceMembers.exists(member => member.user.id === createTaskDto.assigneeId)) {
+        throw new ForbiddenException(
+          'Assignee is not a member of the workspace',
+        );
+      }
+      assignee = await this.userService.findOne(createTaskDto.assigneeId);
+    }
     
     const task = this.taskRepository.create({
       workspace,
@@ -93,21 +101,22 @@ export class TaskService {
 
     const task = await this.findOne(workspaceId, taskId);
 
-    task.type = updateTaskDto.type;
-    task.status = updateTaskDto.status ?? TaskStatusEnum.TO_DO;
-    task.summary = updateTaskDto.summary;
-    task.description = updateTaskDto.description;
+    const { assigneeId, reporterId, parentTaskId, ...rest } = updateTaskDto;
 
-    if (!workspace.workspaceMembers.exists(member => member.user.id === updateTaskDto.assigneeId)) {
-      throw new ForbiddenException('Assignee is not a member of the workspace');
+    if (updateTaskDto.assigneeId) {
+      if (!workspace.workspaceMembers.exists(member => member.user.id === assigneeId)) {
+        throw new ForbiddenException('Assignee is not a member of the workspace');
+      }
+      task.assignee = await this.userService.findOne(updateTaskDto.assigneeId);
     }
-    task.assignee = await this.userService.findOne(updateTaskDto.assigneeId);
+    else if (updateTaskDto.assigneeId === null) {
+      task.assignee = null;
+    }
     
     if (updateTaskDto.reporterId) {
-      if (!workspace.workspaceMembers.exists(member => member.user.id === updateTaskDto.reporterId)) {
+      if (!workspace.workspaceMembers.exists(member => member.user.id === reporterId)) {
         throw new ForbiddenException('Reporter is not a member of the workspace');
       }
-
       task.reporter = await this.userService.findOne(updateTaskDto.reporterId);
     }
     else if (updateTaskDto.reporterId === null) {
@@ -115,15 +124,38 @@ export class TaskService {
     }
 
     if (updateTaskDto.parentTaskId) {
-      task.parentTask = await this.findOne(workspaceId, updateTaskDto.parentTaskId);
+      task.parentTask = await this.findOne(workspaceId, parentTaskId);
     }
     else if (updateTaskDto.parentTaskId === null) {
       task.parentTask = null;
     }
 
+    this.taskRepository.assign(task, rest);
+
     await this.em.flush();
 
     return task;
+  }
+
+  async removeUserRelations(
+    workspaceId: string,
+    userId: string,
+  ): Promise<void> {
+    const assignedTasks = await this.taskRepository.find(
+      { workspace: { id: workspaceId }, assignee: { id: userId } },
+      { populate: ['assignee'] }
+    );
+
+    assignedTasks.forEach(task => task.assignee = null);
+
+    const reportedTasks = await this.taskRepository.find(
+      { workspace: { id: workspaceId }, reporter: { id: userId } },
+      { populate: ['reporter'] }
+    );
+
+    reportedTasks.forEach(task => task.reporter = null);
+
+    await this.em.flush();
   }
 
   async remove(

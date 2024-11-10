@@ -31,7 +31,6 @@ export class WorkspaceController {
   }
 
   @Get(':workspaceId')
-  @Roles(Role.LEADER)
   findOne(@Param('workspaceId') workspaceId: string): Promise<Workspace> {
     return this.workspaceService.findOne(workspaceId);
   }

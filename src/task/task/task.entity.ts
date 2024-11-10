@@ -26,8 +26,8 @@ export class Task extends TrackedEntity {
   @Property({ nullable: true })
   description?: string;
 
-  @ManyToOne(() => User)
-  assignee!: User;
+  @ManyToOne(() => User, { nullable: true })
+  assignee?: User;
 
   @ManyToOne(() => User, { nullable: true })
   reporter?: User;

@@ -19,9 +19,9 @@ export class CreateTaskDto {
   @IsString()
   description?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsUUID()
-  assigneeId!: string;
+  assigneeId?: string;
 
   @IsOptional()
   @IsUUID()

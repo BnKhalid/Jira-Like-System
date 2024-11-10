@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { BacklogTask } from './backlog-task.entity';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/core';
@@ -22,6 +22,19 @@ export class BacklogTaskService {
     sprintId: string,
     createBacklogTaskDto: CreateBacklogTaskDto
   ): Promise<BacklogTask> {
+    const excistedBacklogTask = await this.backlogTaskRepository.findOne(
+      {
+        task: { id: createBacklogTaskDto.taskId },
+        sprint: { id: sprintId, workspace: { id: workspaceId } }
+      }
+    );
+
+    if (excistedBacklogTask) {
+      throw new BadRequestException(
+        `Task with id ${createBacklogTaskDto.taskId} already exists in sprint with id ${sprintId} in workspace with id ${workspaceId}`
+      );
+    }
+
     const sprint = await this.sprintService.findOne(workspaceId, sprintId);
 
     const task = await this.taskService.findOne(workspaceId, createBacklogTaskDto.taskId);
