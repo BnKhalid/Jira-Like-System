@@ -23,16 +23,15 @@ export class WorkspaceMemberService {
 
   async create(
     workspaceId: string,
-    memberId: string,
     createWorkspaceMemberDto: CreateWorkspaceMemberDto
   ): Promise<WorkspaceMember> {
     const workspace = await this.workspaceService.findOne(workspaceId);
     
-    if (workspace.workspaceMembers.exists(member => member.user.id === memberId)) {
+    if (workspace.workspaceMembers.exists(member => member.user.id === createWorkspaceMemberDto.UserId)) {
       throw new ForbiddenException('User is already a member of the workspace');
     }
 
-    const addedUser = await this.userService.findOne(memberId);
+    const addedUser = await this.userService.findOne(createWorkspaceMemberDto.UserId);
 
     const workspaceMember = this.workspaceMemberRepository.create({
       role: createWorkspaceMemberDto.role ?? Role.MEMBER,

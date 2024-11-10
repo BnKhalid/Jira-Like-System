@@ -1,3 +1,11 @@
-import { CreateWorkspaceDto } from './create-workspace.dto';
+import { IsOptional, IsString } from "class-validator";
 
-export class UpdateWorkspaceDto extends CreateWorkspaceDto {}
+export class UpdateWorkspaceDto {
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  key?: string;
+}

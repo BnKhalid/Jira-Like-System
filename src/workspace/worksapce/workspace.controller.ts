@@ -21,12 +21,9 @@ export class WorkspaceController {
   }
 
   @Get()
-  findAll(): Promise<Workspace[]> {
-    return this.workspaceService.findAll();
-  }
-
-  @Get('me')
-  findMyWorkspaces(@CurrentUser() user: UserClaims): Promise<Workspace[]> {
+  findAll(
+    @CurrentUser() user: UserClaims
+  ): Promise<Workspace[]> {
     return this.workspaceService.findAll(user.id);
   }
 

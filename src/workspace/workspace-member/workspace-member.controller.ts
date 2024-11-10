@@ -14,17 +14,15 @@ export class WorkspaceMemberController {
     private workspaceMemberService: WorkspaceMemberService,
   ) {}
 
-  @Post(':memberId')
+  @Post()
   @Roles(Role.ADMIN)
   create(
     @Param('workspaceId')
     workspaceId: string,
-    @Param('memberId') memberId: string,
     @Body() createWorkspaceMemberDto: CreateWorkspaceMemberDto
   ): Promise<WorkspaceMember> {
     return this.workspaceMemberService.create(
       workspaceId,
-      memberId,
       createWorkspaceMemberDto
     );
   }
