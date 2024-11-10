@@ -1,28 +1,27 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { LabelService } from './label.service';
 import { CreateLabelDto } from './dto/create-label.dto';
 import { UpdateLabelDto } from './dto/update-label.dto';
 import { Label } from './label.entity';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { UserClaims } from '../../auth/interfaces/user-claims.interface';
-import { CurrentUser } from '../../auth/decorators/get-user.decorator';
+import { Role } from '../../common/enums/role.enum';
+import { Roles } from '../../auth/decorators/roles.decorator';
 
-@UseGuards(JwtAuthGuard)
 @Controller('api/workspaces/:workspaceId')
 export class LabelController {
   constructor(private labelService: LabelService) {}
 
   @Post('/tasks/:taskId/labels')
+  @Roles(Role.ADMIN)
   create(
     @Param('workspaceId') workspaceId: string,
     @Param('taskId') taskId: string,
     @Body() createLabelDto: CreateLabelDto,
-    @CurrentUser() user: UserClaims,
   ): Promise<Label> {
-    return this.labelService.create(workspaceId, taskId, createLabelDto, user);
+    return this.labelService.create(workspaceId, taskId, createLabelDto);
   }
 
   @Get('labels')
+  @Roles(Role.MEMBER)
   findAll(
     @Param('workspaceId') workspaceId: string,
   ): Promise<Label[]> {
@@ -30,6 +29,7 @@ export class LabelController {
   }
 
   @Get('labels/:labelContent')
+  @Roles(Role.MEMBER)
   findOne(
     @Param('workspaceId') workspaceId: string,
     @Param('labelContent') labelContent: string,
@@ -38,22 +38,22 @@ export class LabelController {
   }
 
   @Patch('labels/:labelContent')
+  @Roles(Role.ADMIN)
   update(
     @Param('workspaceId') workspaceId: string,
     @Param('labelContent') labelContent: string,
-    @Body() updateLabelDto: UpdateLabelDto,
-    @CurrentUser() user: UserClaims,
+    @Body() updateLabelDto: UpdateLabelDto
   ): Promise<Label> {
-    return this.labelService.update(workspaceId, labelContent, updateLabelDto, user);
+    return this.labelService.update(workspaceId, labelContent, updateLabelDto);
   }
 
   @Delete('/tasks/:taskId/labels/:labelContent')
+  @Roles(Role.ADMIN)
   remove(
     @Param('workspaceId') workspaceId: string,
     @Param('taskId') taskId: string,
-    @Param('labelContent') labelContent: string,
-    @CurrentUser() user: UserClaims,
+    @Param('labelContent') labelContent: string
   ): Promise<void> {
-    return this.labelService.remove(workspaceId, taskId, labelContent, user);
+    return this.labelService.remove(workspaceId, taskId, labelContent);
   }
 }

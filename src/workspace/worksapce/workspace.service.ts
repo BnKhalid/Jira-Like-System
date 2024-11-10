@@ -1,11 +1,11 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/core';
 import { Workspace } from './workspace.entity';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
 import { UserClaims } from '../../auth/interfaces/user-claims.interface';
-import { WorkspaceMemberRoleEnum } from '../../common/enums/workspace-member-role.enum';
+import { Role } from '../../common/enums/role.enum';
 
 @Injectable()
 export class WorkspaceService {
@@ -23,7 +23,7 @@ export class WorkspaceService {
       workspaceMembers: [
         {
           user,
-          role: WorkspaceMemberRoleEnum.LEADER,
+          role: Role.LEADER,
         },
       ],
       ...createWorkspaceDto,
@@ -42,48 +42,39 @@ export class WorkspaceService {
       );
     }
 
-    return await this.workspaceRepository.findAll({ populate: ['workspaceMembers', 'tasks', 'sprints'] });
+    return await this.workspaceRepository.findAll({
+      populate: ['workspaceMembers', 'tasks', 'sprints'],
+    });
   }
 
-  async findOne(id: string): Promise<Workspace> {
+  async findOne(workspaceId: string): Promise<Workspace> {
     const workspace = await this.workspaceRepository.findOne(
-      { id },
+      { id: workspaceId },
       { populate: ['workspaceMembers', 'tasks', 'sprints'] },
     );
 
     if (!workspace) {
-      throw new NotFoundException(`Workspace with ID ${id} not found`);
+      throw new NotFoundException(`Workspace with ID ${workspaceId} not found`);
     }
 
     return workspace;
   }
 
   async update(
-    id: string,
+    workspaceId: string,
     updateWorkspaceDto: UpdateWorkspaceDto,
-    user: UserClaims,
   ): Promise<Workspace> {
-    const workspace = await this.findOne(id);
-
-    if (!workspace.hasLeaderPermission(user.id)) {
-      throw new ForbiddenException(
-        'You are not authorized to update this workspace',
-      );
-    }
+    const workspace = await this.findOne(workspaceId);
 
     this.workspaceRepository.assign(workspace, updateWorkspaceDto);
+
     await this.em.persistAndFlush(workspace);
+
     return workspace;
   }
 
-  async remove(id: string, user: UserClaims): Promise<void> {
-    const workspace = await this.findOne(id);
-
-    if (!workspace.hasLeaderPermission(user.id)) {
-      throw new ForbiddenException(
-        'You are not authorized to delete this workspace',
-      );
-    }
+  async remove(workspaceId: string): Promise<void> {
+    const workspace = await this.findOne(workspaceId);
 
     await this.em.removeAndFlush(workspace);
   }

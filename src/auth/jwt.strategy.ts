@@ -6,12 +6,14 @@ import { UserService } from '../user/user.service'
 import { User } from '../user/user.entity';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { UserClaims } from './interfaces/user-claims.interface';
+import { WorkspaceMemberService } from '../workspace/workspace-member/workspace-member.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     configService: ConfigService,
-    private userService: UserService
+    private userService: UserService,
+    private workspaceMemberService: WorkspaceMemberService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -29,11 +31,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('Invalid token payload');
     }
 
+    const roles = await this.workspaceMemberService.getRoles(user.id);
+
     return {
       id: user.id,
       name: user.name,
       username: user.username,
       email: user.email,
+      roles
     };
   }
 }

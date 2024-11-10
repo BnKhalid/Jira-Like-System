@@ -4,7 +4,6 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { Task } from './task.entity';
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
-import { UserClaims } from '../../auth/interfaces/user-claims.interface';
 import { WorkspaceService } from '../../workspace/worksapce/workspace.service';
 import { UserService } from '../../user/user.service';
 import { TaskStatusEnum } from '../../common/enums/task-status.enum';
@@ -22,18 +21,11 @@ export class TaskService {
 
   async create(
     workspaceId: string,
-    createTaskDto: CreateTaskDto,
-    user: UserClaims
+    createTaskDto: CreateTaskDto
   ): Promise<Task> {
     const workspace = await this.workspaceService.findOne(workspaceId);
 
-    if (!workspace.hasAdminPermission(user.id)) {
-      throw new ForbiddenException(
-        'You do not have permission to add members to this workspace',
-      );
-    }
-
-    if (!workspace.hasMemberPermission(createTaskDto.assigneeId)) {
+    if (!workspace.workspaceMembers.exists(member => member.user.id === createTaskDto.assigneeId)) {
       throw new ForbiddenException('Assignee is not a member of the workspace');
     }
 
@@ -44,7 +36,7 @@ export class TaskService {
     
     let reporter: User;
     if (createTaskDto.reporterId) {
-      if (!workspace.hasMemberPermission(createTaskDto.reporterId)) {
+      if (!workspace.workspaceMembers.exists(member => member.user.id === createTaskDto.reporterId)) {
         throw new ForbiddenException(
           'Reporter is not a member of the workspace',
         );
@@ -95,16 +87,9 @@ export class TaskService {
   async update(
     workspaceId: string,
     taskId: string,
-    updateTaskDto: UpdateTaskDto,
-    user: UserClaims
+    updateTaskDto: UpdateTaskDto
   ): Promise<Task> {
     const workspace = await this.workspaceService.findOne(workspaceId);
-
-    if (!workspace.hasAdminPermission(user.id)) {
-      throw new ForbiddenException(
-        'You do not have permission to add members to this workspace'
-      );
-    }
 
     const task = await this.findOne(workspaceId, taskId);
 
@@ -113,13 +98,13 @@ export class TaskService {
     task.summary = updateTaskDto.summary;
     task.description = updateTaskDto.description;
 
-    if (!workspace.hasMemberPermission(updateTaskDto.assigneeId)) {
+    if (!workspace.workspaceMembers.exists(member => member.user.id === updateTaskDto.assigneeId)) {
       throw new ForbiddenException('Assignee is not a member of the workspace');
     }
     task.assignee = await this.userService.findOne(updateTaskDto.assigneeId);
     
     if (updateTaskDto.reporterId) {
-      if (!workspace.hasMemberPermission(updateTaskDto.reporterId)) {
+      if (!workspace.workspaceMembers.exists(member => member.user.id === updateTaskDto.reporterId)) {
         throw new ForbiddenException('Reporter is not a member of the workspace');
       }
 
@@ -144,16 +129,7 @@ export class TaskService {
   async remove(
     workspaceId: string,
     taskId: string,
-    user: UserClaims
   ): Promise<void> {
-    const workspace = await this.workspaceService.findOne(workspaceId);
-
-    if (!workspace.hasAdminPermission(user.id)) {
-      throw new ForbiddenException(
-        'You do not have permission to add members to this workspace',
-      );
-    }
-
     const task = await this.findOne(workspaceId, taskId);
 
     const children = await this.taskRepository.find(

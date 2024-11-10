@@ -1,27 +1,26 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { SprintService } from './sprint.service'
 import { CreateSprintDto } from './dto/create-sprint.dto';
 import { UpdateSprintDto } from './dto/update-sprint.dto';
 import { Sprint } from './sprint.entity';
-import { CurrentUser } from '../../../auth/decorators/get-user.decorator';
-import { UserClaims } from '../../../auth/interfaces/user-claims.interface';
-import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
+import { Roles } from '../../../auth/decorators/roles.decorator';
+import { Role } from '../../../common/enums/role.enum';
 
-@UseGuards(JwtAuthGuard)
 @Controller('api/workspaces/:workspaceId/sprints')
 export class SprintController {
   constructor(private sprintService: SprintService) {}
 
   @Post()
+  @Roles(Role.ADMIN)
   create(
     @Param('workspaceId') workspaceId: string,
-    @Body() createSprintDto: CreateSprintDto,
-    @CurrentUser() user: UserClaims
+    @Body() createSprintDto: CreateSprintDto
   ): Promise<Sprint> {
-    return this.sprintService.create(workspaceId, createSprintDto, user);
+    return this.sprintService.create(workspaceId, createSprintDto);
   }
 
   @Get()
+  @Roles(Role.MEMBER)
   findAll(
     @Param('workspaceId') workspaceId: string
   ): Promise<Sprint[]> {
@@ -29,6 +28,7 @@ export class SprintController {
   }
 
   @Get(':sprintId')
+  @Roles(Role.MEMBER)
   findOne(
     @Param('workspaceId') workspaceId: string,
     @Param('sprintId') sprintId: string
@@ -37,21 +37,21 @@ export class SprintController {
   }
 
   @Patch(':sprintId')
+  @Roles(Role.ADMIN)
   update(
     @Param('workspaceId') workspaceId: string,
     @Param('sprintId') sprintId: string,
-    @Body() updateSprintDto: UpdateSprintDto,
-    @CurrentUser() user: UserClaims
+    @Body() updateSprintDto: UpdateSprintDto
   ): Promise<Sprint> {
-    return this.sprintService.update(workspaceId, sprintId, updateSprintDto, user);
+    return this.sprintService.update(workspaceId, sprintId, updateSprintDto);
   }
 
   @Delete(':sprintId')
+  @Roles(Role.ADMIN)
   remove(
     @Param('workspaceId') workspaceId: string,
-    @Param('sprintId') sprintId: string,
-    @CurrentUser() user: UserClaims
+    @Param('sprintId') sprintId: string
   ): Promise<void> {
-    return this.sprintService.remove(workspaceId, sprintId, user);
+    return this.sprintService.remove(workspaceId, sprintId);
   }
 }

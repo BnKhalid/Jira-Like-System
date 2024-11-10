@@ -1,12 +1,10 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { BacklogTask } from './backlog-task.entity';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/core';
-import { WorkspaceService } from '../../worksapce/workspace.service';
 import { SprintService } from '../sprint/sprint.service';
 import { TaskService } from '../../../task/task/task.service';
 import { CreateBacklogTaskDto } from './dto/create-backlog-task.dto';
-import { UserClaims } from '../../../auth/interfaces/user-claims.interface';
 import { UpdateBacklogTaskDto } from './dto/update-backlog-task.dto';
 
 @Injectable()
@@ -15,7 +13,6 @@ export class BacklogTaskService {
     @InjectRepository(BacklogTask)
     private backlogTaskRepository: EntityRepository<BacklogTask>,
     private em: EntityManager,
-    private workspaceService: WorkspaceService,
     private sprintService: SprintService,
     private taskService: TaskService
   ) {}
@@ -23,15 +20,8 @@ export class BacklogTaskService {
   async create(
     workspaceId: string,
     sprintId: string,
-    createBacklogTaskDto: CreateBacklogTaskDto,
-    user: UserClaims
+    createBacklogTaskDto: CreateBacklogTaskDto
   ): Promise<BacklogTask> {
-    const workspace = await this.workspaceService.findOne(workspaceId);
-
-    if (!workspace.hasAdminPermission(user.id)) {
-      throw new ForbiddenException('You do not have permission to create a backlog task');
-    }
-
     const sprint = await this.sprintService.findOne(workspaceId, sprintId);
 
     const task = await this.taskService.findOne(workspaceId, createBacklogTaskDto.taskId);
@@ -80,15 +70,8 @@ export class BacklogTaskService {
     workspaceId: string,
     sprintId: string,
     backlogId: string,
-    updateBacklogTaskDto: UpdateBacklogTaskDto,
-    user: UserClaims
+    updateBacklogTaskDto: UpdateBacklogTaskDto
   ): Promise<BacklogTask> {
-    const workspace = await this.workspaceService.findOne(workspaceId);
-
-    if (!workspace.hasAdminPermission(user.id)) {
-      throw new ForbiddenException('You do not have permission to update a backlog task');
-    }
-
     const backlogTask = await this.findOne(workspaceId, sprintId, backlogId);
 
     this.backlogTaskRepository.assign(backlogTask, updateBacklogTaskDto);
@@ -101,15 +84,8 @@ export class BacklogTaskService {
   async remove(
     workspaceId: string,
     sprintId: string,
-    backlogId: string,
-    user: UserClaims
+    backlogId: string
   ): Promise<void> {
-    const workspace = await this.workspaceService.findOne(workspaceId);
-
-    if (!workspace.hasAdminPermission(user.id)) {
-      throw new ForbiddenException('You do not have permission to remove a backlog task');
-    }
-
     const backlogTask = await this.findOne(workspaceId, sprintId, backlogId);
 
     await this.em.removeAndFlush(backlogTask);

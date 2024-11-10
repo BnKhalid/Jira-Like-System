@@ -1,27 +1,26 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { CurrentUser } from '../../auth/decorators/get-user.decorator';
-import { UserClaims } from '../../auth/interfaces/user-claims.interface';
 import { Task } from './task.entity';
+import { Role } from '../../common/enums/role.enum';
+import { Roles } from '../../auth/decorators/roles.decorator';
 
-@UseGuards(JwtAuthGuard)
 @Controller('api/workspaces/:workspaceId/tasks')
 export class TaskController {
   constructor(private taskService: TaskService) {}
 
   @Post()
+  @Roles(Role.ADMIN)
   create(
     @Param('workspaceId') workspaceId: string,
-    @Body() createTaskDto: CreateTaskDto,
-    @CurrentUser() user: UserClaims
+    @Body() createTaskDto: CreateTaskDto
   ): Promise<Task> {
-    return this.taskService.create(workspaceId, createTaskDto, user);
+    return this.taskService.create(workspaceId, createTaskDto);
   }
 
   @Get()
+  @Roles(Role.MEMBER)
   findAll(
     @Param('workspaceId') workspaceId: string
   ): Promise<Task[]> {
@@ -29,6 +28,7 @@ export class TaskController {
   }
 
   @Get(':taskId')
+  @Roles(Role.MEMBER)
   findOne(
     @Param('workspaceId') workspaceId: string,
     @Param('taskId') taskId: string
@@ -37,21 +37,21 @@ export class TaskController {
   }
 
   @Patch(':taskId')
+  @Roles(Role.ADMIN)
   update(
     @Param('workspaceId') workspaceId: string,
     @Param('taskId') taskId: string,
-    @Body() updateTaskDto: UpdateTaskDto,
-    @CurrentUser() user: UserClaims
+    @Body() updateTaskDto: UpdateTaskDto
   ): Promise<Task> {
-    return this.taskService.update(workspaceId, taskId, updateTaskDto, user);
+    return this.taskService.update(workspaceId, taskId, updateTaskDto);
   }
 
   @Delete(':taskId')
+  @Roles(Role.ADMIN)
   remove(
     @Param('workspaceId') workspaceId: string,
-    @Param('taskId') taskId: string,
-    @CurrentUser() user: UserClaims
+    @Param('taskId') taskId: string
   ): Promise<void> {
-    return this.taskService.remove(workspaceId, taskId, user);
+    return this.taskService.remove(workspaceId, taskId);
   }
 }

@@ -5,7 +5,7 @@ import { WorkspaceMember } from './workspace-member.entity';
 import { EntityManager, EntityRepository } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { UserClaims } from '../../auth/interfaces/user-claims.interface';
-import { WorkspaceMemberRoleEnum } from '../../common/enums/workspace-member-role.enum';
+import { Role } from '../../common/enums/role.enum';
 import { WorkspaceService } from '../worksapce/workspace.service';
 import { UserService } from '../../user/user.service';
 
@@ -22,25 +22,18 @@ export class WorkspaceMemberService {
   async create(
     workspaceId: string,
     memberId: string,
-    createWorkspaceMemberDto: CreateWorkspaceMemberDto,
-    user: UserClaims,
+    createWorkspaceMemberDto: CreateWorkspaceMemberDto
   ): Promise<WorkspaceMember> {
     const workspace = await this.workspaceService.findOne(workspaceId);
-
-    if (!workspace.hasAdminPermission(user.id)) {
-      throw new ForbiddenException(
-        'You do not have permission to add members to this workspace',
-      );
-    }
     
-    if (workspace.hasMemberPermission(memberId)) {
+    if (workspace.workspaceMembers.exists(member => member.user.id === memberId)) {
       throw new ForbiddenException('User is already a member of the workspace');
     }
 
     const addedUser = await this.userService.findOne(memberId);
 
-    const workspaceMember = this.em.create(WorkspaceMember, {
-      role: createWorkspaceMemberDto.role ?? WorkspaceMemberRoleEnum.MEMBER,
+    const workspaceMember = this.workspaceMemberRepository.create({
+      role: createWorkspaceMemberDto.role ?? Role.MEMBER,
       user: addedUser,
       workspace,
     });
@@ -50,8 +43,8 @@ export class WorkspaceMemberService {
     return workspaceMember;
   }
 
-  findAll(workspaceId: string): Promise<WorkspaceMember[]> {
-    return this.workspaceMemberRepository.find(
+  async findAll(workspaceId: string): Promise<WorkspaceMember[]> {
+    return await this.workspaceMemberRepository.find(
       { workspace: { id: workspaceId } },
       { populate: ['user'] },
     );
@@ -78,24 +71,15 @@ export class WorkspaceMemberService {
   async update(
     workspaceId: string,
     userId: string,
-    updateWorkspaceMemberDto: UpdateWorkspaceMemberDto,
-    user: UserClaims,
+    updateWorkspaceMemberDto: UpdateWorkspaceMemberDto
   ): Promise<WorkspaceMember> {
-    const workspace = await this.workspaceService.findOne(workspaceId);
-
-    if (!workspace.hasAdminPermission(user.id)) {
-      throw new ForbiddenException(
-        'You do not have permission to update members in this workspace',
-      );
-    }
-
     const workspaceMember = await this.findOne(workspaceId, userId);
 
-    if (workspaceMember.role === WorkspaceMemberRoleEnum.LEADER) {
+    if (workspaceMember.role === Role.LEADER) {
       throw new BadRequestException('Cannot update the role of a leader');
     }
 
-    if (updateWorkspaceMemberDto.role === WorkspaceMemberRoleEnum.LEADER) {
+    if (updateWorkspaceMemberDto.role === Role.LEADER) {
       throw new BadRequestException('Cannot change workspace leader');
     }
 
@@ -116,26 +100,32 @@ export class WorkspaceMemberService {
     const workspaceMember = await this.findOne(workspaceId, userId);
 
     if (userId === user.id) {
-      if (workspace.hasLeaderPermission(user.id)) {
-        this.workspaceService.remove(workspaceId, user);
+      if (user.roles.get(workspaceId) === Role.LEADER) {
+        this.workspaceService.remove(workspaceId);
       }
       else {
-        this.em.removeAndFlush(workspaceMember);
+        await this.em.removeAndFlush(workspaceMember);
       }
       return;
     }
 
-    if (!workspace.hasAdminPermission(user.id)) {
-      throw new ForbiddenException(
-        'You do not have permission to remove members from this workspace',
-      );
-    }
-
-    if (workspaceMember.role === WorkspaceMemberRoleEnum.LEADER) {
+    if (workspaceMember.role === Role.LEADER) {
       throw new BadRequestException('Cannot remove the leader of the workspace');
     }
     else {
       await this.em.removeAndFlush(workspaceMember);
     }
+  }
+
+  async getRoles(userId: string): Promise<Map<string, Role>> {
+    const workspaceMembers = await this.workspaceMemberRepository.find(
+      { user: { id: userId } },
+      { populate: ['workspace'] },
+    );
+
+    return workspaceMembers.reduce((acc, curr) => {
+      acc.set(curr.workspace.id, curr.role);
+      return acc;
+    }, new Map<string, Role>());
   }
 }

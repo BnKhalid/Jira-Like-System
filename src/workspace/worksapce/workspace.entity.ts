@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { Sprint } from '../sprint/sprint/sprint.entity'
 import { WorkspaceMember } from '../workspace-member/workspace-member.entity';
 import { TrackedEntity } from '../../common/entities/tracked.entity';
-import { WorkspaceMemberRoleEnum } from '../../common/enums/workspace-member-role.enum';
 import { Task } from '../../task/task/task.entity';
 
 @Entity()
@@ -37,26 +36,4 @@ export class Workspace extends TrackedEntity {
     { cascade: [Cascade.REMOVE] }
   )
   tasks = new Collection<Task>(this);
-
-  //#region Helper methods
-  
-  hasLeaderPermission(userId: string): boolean {
-    return this.workspaceMembers.getItems().some(
-      (member) => member.user.id === userId && member.role === WorkspaceMemberRoleEnum.LEADER
-    );
-  }
-
-  hasAdminPermission(userId: string): boolean {
-    return this.workspaceMembers.getItems().some(
-      (member) => member.user.id === userId && member.role !== WorkspaceMemberRoleEnum.MEMBER
-    );
-  }
-
-  hasMemberPermission(userId: string): boolean {
-    return this.workspaceMembers.getItems().some(
-      (member) => member.user.id === userId
-    );
-  }
-
-  //#endregion
 }

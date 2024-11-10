@@ -7,8 +7,6 @@ import { EntityRepository, t } from '@mikro-orm/core';
 import { EntityManager } from '@mikro-orm/postgresql';
 import { TaskService } from '../task/task.service';
 import { TaskLinkTypeEnum } from '../../common/enums/task-link-type.enum';
-import { WorkspaceService } from '../../workspace/worksapce/workspace.service';
-import { UserClaims } from '../../auth/interfaces/user-claims.interface';
 
 @Injectable()
 export class TaskLinkService {
@@ -16,24 +14,14 @@ export class TaskLinkService {
     @InjectRepository(TaskLink)
     private taskLinkRepository: EntityRepository<TaskLink>,
     private em: EntityManager,
-    private taskService: TaskService,
-    private worksapceService:WorkspaceService
+    private taskService: TaskService
   ) { }
 
   async create(
     workspaceId: string,
     taskId: string,
-    createTaskLinkDto: CreateTaskLinkDto,
-    user: UserClaims
+    createTaskLinkDto: CreateTaskLinkDto
   ): Promise<TaskLink> {
-    const workspace = await this.worksapceService.findOne(workspaceId);
-
-    if (!workspace.hasAdminPermission(user.id)) {
-      throw new ForbiddenException(
-        `User ${user.id} does not have permission to create task link in workspace ${workspaceId}`
-      );
-    }
-
     const sourceTask = await this.taskService.findOne(workspaceId, taskId);
     const targetTask = await this.taskService.findOne(workspaceId, createTaskLinkDto.targetTaskId);
 
@@ -98,17 +86,8 @@ export class TaskLinkService {
     workspaceId: string,
     sourceTaskId: string,
     sourceTaskLinkId: string,
-    updateTaskLinkDto: UpdateTaskLinkDto,
-    user: UserClaims
+    updateTaskLinkDto: UpdateTaskLinkDto
   ): Promise<TaskLink> {
-    const workspace = await this.worksapceService.findOne(workspaceId);
-
-    if (!workspace.hasAdminPermission(user.id)) {
-      throw new ForbiddenException(
-        `User ${user.id} does not have permission to update task link in workspace ${workspaceId}`
-      );
-    }
-
     const taskLink = await this.findOne(workspaceId, sourceTaskId, sourceTaskLinkId);
     const reversedTaskLink = await this.taskLinkRepository.findOne(
       { sourceTask: taskLink.targetTask, targetTask: taskLink.sourceTask }
@@ -140,17 +119,8 @@ export class TaskLinkService {
   async remove(
     workspaceId: string,
     taskId: string,
-    sourceTaskLinkId: string,
-    user: UserClaims
+    sourceTaskLinkId: string
   ): Promise<void> {
-    const workspace = await this.worksapceService.findOne(workspaceId);
-
-    if (!workspace.hasAdminPermission(user.id)) {
-      throw new ForbiddenException(
-        `User ${user.id} does not have permission to delete task link in workspace ${workspaceId}`
-      );
-    }
-
     const taskLink = await this.findOne(workspaceId, taskId, sourceTaskLinkId);
     const reversedTaskLink = await this.taskLinkRepository.findOne(
       { sourceTask: taskLink.targetTask, targetTask: taskLink.sourceTask }

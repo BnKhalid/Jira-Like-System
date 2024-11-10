@@ -3,7 +3,9 @@ import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { Public } from './decorators/public.decorator';
 
+@Public()
 @Controller('api/auth')
 export class AuthController {
   constructor(private authService: AuthService) {}

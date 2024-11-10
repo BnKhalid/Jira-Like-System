@@ -3,13 +3,11 @@ import { LabelService } from './label.service';
 import { LabelController } from './label.controller';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Label } from './label.entity';
-import { WorkspaceModule } from '../../workspace/worksapce/workspace.module';
 import { TaskModule } from '../task/task.module';
 
 @Module({
   imports: [
     MikroOrmModule.forFeature([Label]),
-    WorkspaceModule,
     TaskModule
   ],
   controllers: [LabelController],

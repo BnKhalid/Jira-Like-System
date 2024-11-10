@@ -11,6 +11,9 @@ import { TaskLinkModule } from './task/task-link/task-link.module';
 import { LabelModule } from './task/label/label.module';
 import { SprintModule } from './workspace/sprint/sprint/sprint.module';
 import { BacklogTaskModule } from './workspace/sprint/backlog-task/backlog-task.module';
+import { RolesGuard } from './auth/guards/roles.guard';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -27,6 +30,15 @@ import { BacklogTaskModule } from './workspace/sprint/backlog-task/backlog-task.
     BacklogTaskModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
 })
 export class AppModule {}

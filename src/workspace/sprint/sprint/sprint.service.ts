@@ -1,8 +1,7 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSprintDto } from './dto/create-sprint.dto';
 import { UpdateSprintDto } from './dto/update-sprint.dto';
 import { Sprint } from './sprint.entity';
-import { UserClaims } from '../../../auth/interfaces/user-claims.interface';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/core';
 import { WorkspaceService } from '../../worksapce/workspace.service';
@@ -18,14 +17,9 @@ export class SprintService {
 
   async create(
     workspaceId: string,
-    createSprintDto: CreateSprintDto,
-    user: UserClaims
+    createSprintDto: CreateSprintDto
   ): Promise<Sprint> {
     const workspace = await this.workspaceService.findOne(workspaceId);
-
-    if (!workspace.hasAdminPermission(user.id)) {
-      throw new ForbiddenException('You do not have permission to create a sprint');
-    }
 
     const sprint = this.sprintRepository.create({
       workspace,
@@ -67,15 +61,8 @@ export class SprintService {
   async update(
     workspaceId: string,
     sprintId: string,
-    updateSprintDto: UpdateSprintDto,
-    user: UserClaims
+    updateSprintDto: UpdateSprintDto
   ): Promise<Sprint> {
-    const workspace = await this.workspaceService.findOne(workspaceId);
-
-    if (!workspace.hasAdminPermission(user.id)) {
-      throw new ForbiddenException('You do not have permission to update a sprint');
-    }
-
     const sprint = await this.findOne(workspaceId, sprintId);
 
     this.sprintRepository.assign(sprint, updateSprintDto);
@@ -87,15 +74,8 @@ export class SprintService {
 
   async remove(
     workspaceId: string,
-    sprintId: string,
-    user: UserClaims
+    sprintId: string
   ): Promise<void> {
-    const workspace = await this.workspaceService.findOne(workspaceId);
-
-    if (!workspace.hasAdminPermission(user.id)) {
-      throw new ForbiddenException('You do not have permission to delete a sprint');
-    }
-
     const sprint = await this.findOne(workspaceId, sprintId);
     
     await this.em.removeAndFlush(sprint);

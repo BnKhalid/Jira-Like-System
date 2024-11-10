@@ -1,14 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { WorkspaceService } from './workspace.service';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
 import { Workspace } from './workspace.entity';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { Request } from 'express';
-import { CurrentUser } from '../../auth/decorators/get-user.decorator';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { UserClaims } from '../../auth/interfaces/user-claims.interface';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { Role } from '../../common/enums/role.enum';
 
-@UseGuards(JwtAuthGuard)
 @Controller('api/workspaces')
 export class WorkspaceController {
   constructor(private workspaceService: WorkspaceService) {}
@@ -22,7 +21,7 @@ export class WorkspaceController {
   }
 
   @Get()
-  findAll(@Req() req: Request): Promise<Workspace[]> {
+  findAll(): Promise<Workspace[]> {
     return this.workspaceService.findAll();
   }
 
@@ -31,27 +30,26 @@ export class WorkspaceController {
     return this.workspaceService.findAll(user.id);
   }
 
-  @Get(':id')
-  findOne(
-    @Param('id') id: string
-  ): Promise<Workspace> {
-    return this.workspaceService.findOne(id);
+  @Get(':workspaceId')
+  @Roles(Role.LEADER)
+  findOne(@Param('workspaceId') workspaceId: string): Promise<Workspace> {
+    return this.workspaceService.findOne(workspaceId);
   }
 
-  @Patch(':id')
+  @Patch(':workspaceId')
+  @Roles(Role.LEADER)
   update(
-    @Param('id') id: string,
-    @Body() updateWorkspaceDto: UpdateWorkspaceDto,
-    @CurrentUser() user: UserClaims,
+    @Param('workspaceId') workspaceId: string,
+    @Body() updateWorkspaceDto: UpdateWorkspaceDto
   ): Promise<Workspace> {
-    return this.workspaceService.update(id, updateWorkspaceDto, user);
+    return this.workspaceService.update(workspaceId, updateWorkspaceDto);
   }
 
-  @Delete(':id')
+  @Delete(':workspaceId')
+  @Roles(Role.LEADER)
   remove(
-    @Param('id') id: string,
-    @CurrentUser() user: UserClaims,
+    @Param('workspaceId') workspaceId: string
   ): Promise<void> {
-    return this.workspaceService.remove(id, user);
+    return this.workspaceService.remove(workspaceId);
   }
 }

@@ -7,6 +7,7 @@ import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
 import { RefreshToken } from './refresh-token.entity';
 import { UserModule } from '../user/user.module';
+import { WorkspaceMemberModule } from '../workspace/workspace-member/workspace-member.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UserModule } from '../user/user.module';
       }),
     }),
     UserModule,
+    WorkspaceMemberModule,
     ConfigModule
   ],
   providers: [AuthService, JwtStrategy],

@@ -1,13 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { WorkspaceMemberService } from './workspace-member.service';
 import { CreateWorkspaceMemberDto } from './dto/create-workspace-member.dto';
 import { UpdateWorkspaceMemberDto } from './dto/update-workspace-member.dto';
 import { WorkspaceMember } from './workspace-member.entity';
-import { CurrentUser } from '../../auth/decorators/get-user.decorator';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { UserClaims } from '../../auth/interfaces/user-claims.interface';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { Role } from '../../common/enums/role.enum';
 
-@UseGuards(JwtAuthGuard)
 @Controller('api/workspaces/:workspaceId/members')
 export class WorkspaceMemberController {
   constructor(
@@ -15,22 +15,22 @@ export class WorkspaceMemberController {
   ) {}
 
   @Post(':memberId')
+  @Roles(Role.ADMIN)
   create(
     @Param('workspaceId')
     workspaceId: string,
     @Param('memberId') memberId: string,
-    @Body() createWorkspaceMemberDto: CreateWorkspaceMemberDto,
-    @CurrentUser() user: UserClaims,
+    @Body() createWorkspaceMemberDto: CreateWorkspaceMemberDto
   ): Promise<WorkspaceMember> {
     return this.workspaceMemberService.create(
       workspaceId,
       memberId,
-      createWorkspaceMemberDto,
-      user
+      createWorkspaceMemberDto
     );
   }
 
   @Get()
+  @Roles(Role.MEMBER)
   findAll(
     @Param('workspaceId')
     workspaceId: string,
@@ -47,6 +47,7 @@ export class WorkspaceMemberController {
   }
 
   @Get(':memberId')
+  @Roles(Role.MEMBER)
   findOne(
     @Param('workspaceId')
     workspaceId: string,
@@ -56,17 +57,16 @@ export class WorkspaceMemberController {
   }
 
   @Patch(':memberId')
+  @Roles(Role.ADMIN)
   update(
     @Param('workspaceId') workspaceId: string,
     @Param('memberId') memberId: string,
-    @Body() updateWorkspaceMemberDto: UpdateWorkspaceMemberDto,
-    @CurrentUser() user: UserClaims,
+    @Body() updateWorkspaceMemberDto: UpdateWorkspaceMemberDto
   ): Promise<WorkspaceMember> {
     return this.workspaceMemberService.update(
       workspaceId,
       memberId,
-      updateWorkspaceMemberDto,
-      user
+      updateWorkspaceMemberDto
     );
   }
 
@@ -79,6 +79,7 @@ export class WorkspaceMemberController {
   }
 
   @Delete(':memberId')
+  @Roles(Role.ADMIN)
   remove(
     @CurrentUser() user: UserClaims,
     @Param('workspaceId') workspaceId: string,
