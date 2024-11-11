@@ -40,7 +40,9 @@ export class SprintTaskController {
       new ParseArrayPipe({ items: String, separator: ',', optional: true })
     ) labels?: string[],
   ): Promise<SprintTask[]> {
-    const filters: SprintTaskFilters = { status, type, labels, parentTaskId, assigneeId, reporterId, priority, storyPointEstimate };
+    const filters: SprintTaskFilters = {
+      status, type, labels, parentTaskId, assigneeId, reporterId, priority, storyPointEstimate
+    };
     return this.sprintTaskService.findAll(workspaceId, sprintId, filters);
   }
 

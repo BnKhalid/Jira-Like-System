@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { AuthService } from './auth.service';
@@ -13,7 +13,6 @@ import { WorkspaceMemberModule } from '../workspace/workspace-member/workspace-m
   imports: [
     MikroOrmModule.forFeature([RefreshToken]),
     JwtModule.registerAsync({
-      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
@@ -21,8 +20,7 @@ import { WorkspaceMemberModule } from '../workspace/workspace-member/workspace-m
       }),
     }),
     UserModule,
-    WorkspaceMemberModule,
-    ConfigModule
+    WorkspaceMemberModule
   ],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController],

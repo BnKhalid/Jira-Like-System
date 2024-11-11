@@ -3,7 +3,8 @@ import { SprintService } from './sprint.service';
 import { SprintController } from './sprint.controller';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Sprint } from './sprint.entity';
-import { WorkspaceModule } from '../../worksapce/workspace.module'; 
+import { WorkspaceModule } from '../../workspace/workspace.module'; 
+
 @Module({
   imports: [
     MikroOrmModule.forFeature([Sprint]),

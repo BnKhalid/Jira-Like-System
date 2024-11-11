@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import mikroOrmConfig from './mikro-orm.config';
 import { ConfigModule } from '@nestjs/config';
-import { WorkspaceModule } from './workspace/worksapce/workspace.module';
+import { WorkspaceModule } from './workspace/workspace/workspace.module';
 import { WorkspaceMemberModule } from './workspace/workspace-member/workspace-member.module';
 import { TaskModule } from './task/task/task.module';
 import { UserModule } from './user/user.module';
@@ -14,11 +14,12 @@ import { SprintTaskModule } from './workspace/sprint/sprint-task/sprint-task.mod
 import { RolesGuard } from './auth/guards/roles.guard';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     MikroOrmModule.forRoot(mikroOrmConfig),
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
     AuthModule,
     WorkspaceModule,
     WorkspaceMemberModule,

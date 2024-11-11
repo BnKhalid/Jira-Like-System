@@ -4,11 +4,13 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { Task } from './task.entity';
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
-import { WorkspaceService } from '../../workspace/worksapce/workspace.service';
+import { WorkspaceService } from '../../workspace/workspace/workspace.service';
 import { UserService } from '../../user/user.service';
 import { User } from '../../user/user.entity';
 import { TaskTypeEnum } from '../../common/enums/task-type.enum';
 import { TaskFilters } from './task-filters.interface';
+import { LabelService } from '../label/label.service';
+import { AddLabelDto } from './dto/add-label-content.dto';
 
 @Injectable()
 export class TaskService {
@@ -18,6 +20,7 @@ export class TaskService {
     private em: EntityManager,
     private workspaceService: WorkspaceService,
     private userService: UserService,
+    private labelService: LabelService,
   ) {}
 
   async create(
@@ -70,6 +73,26 @@ export class TaskService {
     return task;
   }
 
+  async addLabel(
+    workspaceId: string,
+    taskId: string,
+    addLabelDto: AddLabelDto
+  ): Promise<Task> {
+    const task = await this.findOne(workspaceId, taskId);
+
+    if (task.labels.exists(label => label.content === addLabelDto.labelContent)) {
+      throw new BadRequestException('Task already has this label');
+    }
+
+    const label = await this.labelService.tryGetLabel(workspaceId, addLabelDto.labelContent);
+
+    task.labels.add(label);
+
+    await this.em.flush();
+
+    return task;
+  }
+
   async findAll(
     workspaceId: string,
     filters: TaskFilters,
@@ -97,7 +120,7 @@ export class TaskService {
     }
 
     if (filters.labels && filters.labels.length > 0) {
-      criteria.labels = { labelContent: { $in: filters.labels } };
+      criteria.labels = { content: { $in: filters.labels } };
     }
 
     return await this.taskRepository.find(
@@ -171,6 +194,51 @@ export class TaskService {
     return task;
   }
 
+  async remove(
+    workspaceId: string,
+    taskId: string,
+  ): Promise<void> {
+    const task = await this.findOne(workspaceId, taskId);
+
+    const children = await this.taskRepository.find(
+      { parentTask: { id: taskId } }
+    );
+
+    for (const child of children) {
+      child.parentTask = null;
+
+      this.em.remove(child);
+    }
+
+    await this.em.removeAndFlush(task);
+  }
+
+  async removeLabel(
+    workspaceId: string,
+    taskId: string,
+    labelId: string,
+  ): Promise<Task> {
+    const task = await this.findOne(workspaceId, taskId);
+
+    const label = task.labels.getItems().find(label => label.id === labelId);
+
+    if (!label) {
+      throw new NotFoundException(`Label with ID ${labelId} is not assigned to this task`);
+    }
+
+    task.labels.remove(label);
+
+    await this.em.flush();
+
+    const labelTasksCount = await this.taskRepository.count({ labels: label, workspace: { id: workspaceId } });
+
+    if (labelTasksCount === 0) {
+      await this.labelService.deleteLabelIfUnused(workspaceId, label.id);
+    }
+
+    return task;
+  }
+
   async removeUserRelations(
     workspaceId: string,
     userId: string,
@@ -190,25 +258,6 @@ export class TaskService {
     reportedTasks.forEach(task => task.reporter = null);
 
     await this.em.flush();
-  }
-
-  async remove(
-    workspaceId: string,
-    taskId: string,
-  ): Promise<void> {
-    const task = await this.findOne(workspaceId, taskId);
-
-    const children = await this.taskRepository.find(
-      { parentTask: { id: taskId } }
-    );
-
-    for (const child of children) {
-      child.parentTask = null;
-
-      this.em.remove(child);
-    }
-
-    await this.em.removeAndFlush(task);
   }
 
   private validateParentTask(task: Task, parentTask?: Task): void {

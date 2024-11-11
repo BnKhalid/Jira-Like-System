@@ -4,7 +4,7 @@ import { UpdateSprintDto } from './dto/update-sprint.dto';
 import { Sprint } from './sprint.entity';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/core';
-import { WorkspaceService } from '../../worksapce/workspace.service';
+import { WorkspaceService } from '../../workspace/workspace.service';
 
 @Injectable()
 export class SprintService {

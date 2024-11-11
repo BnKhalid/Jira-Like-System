@@ -4,6 +4,7 @@ import { Sprint } from '../sprint/sprint/sprint.entity'
 import { WorkspaceMember } from '../workspace-member/workspace-member.entity';
 import { TrackedEntity } from '../../common/entities/tracked.entity';
 import { Task } from '../../task/task/task.entity';
+import { Label } from '../../task/label/label.entity';
 
 @Entity()
 export class Workspace extends TrackedEntity {
@@ -36,4 +37,11 @@ export class Workspace extends TrackedEntity {
     { cascade: [Cascade.REMOVE] }
   )
   tasks = new Collection<Task>(this);
+
+  @OneToMany(
+    () => Label,
+    label => label.workspace,
+    { cascade: [Cascade.REMOVE] }
+  )
+  labels = new Collection<Label>(this);
 }

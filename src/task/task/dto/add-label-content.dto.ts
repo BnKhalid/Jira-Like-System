@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateLabelDto {
+export class AddLabelDto {
   @IsString()
   @IsNotEmpty()
   labelContent: string;

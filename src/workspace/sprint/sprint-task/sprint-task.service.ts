@@ -23,16 +23,16 @@ export class SprintTaskService {
     sprintId: string,
     createSprintTaskDto: CreateSprintTaskDto
   ): Promise<SprintTask> {
-    const excistedSprintTask = await this.sprintTaskRepository.findOne(
+    const existingSprintTask = await this.sprintTaskRepository.findOne(
       {
         task: { id: createSprintTaskDto.taskId },
-        sprint: { id: sprintId, workspace: { id: workspaceId } }
+        sprint: { workspace: { id: workspaceId } }
       }
     );
 
-    if (excistedSprintTask) {
+    if (existingSprintTask) {
       throw new BadRequestException(
-        `Task with id ${createSprintTaskDto.taskId} already exists in sprint with id ${sprintId} in workspace with id ${workspaceId}`
+        `Task with id ${createSprintTaskDto.taskId} already exists in sprint in workspace with id ${workspaceId}`
       );
     }
 
@@ -59,27 +59,27 @@ export class SprintTaskService {
     const criteria: any = { sprint: { id: sprintId, workspace: { id: workspaceId } } };
 
     if (filters.status) {
-      criteria.task = { status: filters.status };
+      criteria.task = { ...(criteria.task || {}), status: filters.status };
     }
 
     if (filters.type) {
-      criteria.task = { type: filters.type };
+      criteria.task = { ...(criteria.task || {}), type: filters.type };
     }
 
     if (filters.parentTaskId) {
-      criteria.task = { parentTask: { id: filters.parentTaskId } };
+      criteria.task = { ...(criteria.task || {}), parentTask: { id: filters.parentTaskId } };
     }
 
     if (filters.assigneeId) {
-      criteria.task = { assignee: { id: filters.assigneeId } };
+      criteria.task = { ...(criteria.task || {}), assignee: { id: filters.assigneeId } };
     }
 
     if (filters.reporterId) {
-      criteria.task = { reporter: { id: filters.reporterId } };
+      criteria.task = { ...(criteria.task || {}), reporter: { id: filters.reporterId } };
     }
 
     if (filters.labels && filters.labels.length > 0) {
-      criteria.task = { labels: { $in: filters.labels } };
+      criteria.task = { ...(criteria.task || {}), labels: { $in: filters.labels } };
     }
 
     if (filters.priority) {

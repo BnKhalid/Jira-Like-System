@@ -47,7 +47,7 @@ export class UserService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    await this.checkConflict(updateUserDto.email, updateUserDto.username);
+    await this.checkConflict(updateUserDto.email, updateUserDto.username, id);
 
     const user = await this.findOne(id);
     
@@ -67,28 +67,28 @@ export class UserService {
     const user = await this.userRepository.findOne({ email });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      return null;
     }
 
     const isEqual = await compare(password, user.password);
 
-    if (!user || !isEqual) {
+    if (!isEqual) {
       return null;
     }
 
     return user;
   }
 
-  private async checkConflict(email: string, username: string): Promise<void> {
+  private async checkConflict(email: string, username: string, userId?: string): Promise<void> {
     const isEmailExists = await this.userRepository.findOne({ email });
 
-    if (isEmailExists) {
+    if (isEmailExists && (!userId || isEmailExists.id !== userId)) {
       throw new ConflictException('Email already exists');
     }
 
     const isUsernameExists = await this.userRepository.findOne({ username });
 
-    if (isUsernameExists) {
+    if (isUsernameExists && (!userId || isUsernameExists.id !== userId)) {
       throw new ConflictException('Username already exists');
     }
   }

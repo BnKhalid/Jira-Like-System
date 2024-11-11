@@ -1,5 +1,5 @@
-import { SprintTaskPriorityEnum } from "../../../common/enums/sprint-task-priority.enum";
-import { TaskFilters } from "../../../task/task/task-filters.interface";
+import { SprintTaskPriorityEnum } from '../../../common/enums/sprint-task-priority.enum';
+import { TaskFilters } from '../../../task/task/task-filters.interface';
 
 export interface SprintTaskFilters extends TaskFilters {
   priority?: SprintTaskPriorityEnum;

@@ -6,7 +6,7 @@ import { EntityManager, EntityRepository } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { UserClaims } from '../../auth/interfaces/user-claims.interface';
 import { Role } from '../../common/enums/role.enum';
-import { WorkspaceService } from '../worksapce/workspace.service';
+import { WorkspaceService } from '../workspace/workspace.service';
 import { UserService } from '../../user/user.service';
 import { TaskService } from '../../task/task/task.service';
 

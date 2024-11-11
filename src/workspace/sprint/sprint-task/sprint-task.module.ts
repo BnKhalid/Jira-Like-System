@@ -5,7 +5,7 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { SprintTask } from './sprint-task.entity';
 import { SprintModule } from '../sprint/sprint.module';
 import { TaskModule } from '../../../task/task/task.module';
-import { WorkspaceModule } from '../../worksapce/workspace.module';
+import { WorkspaceModule } from '../../workspace/workspace.module';
 
 @Module({
   imports: [

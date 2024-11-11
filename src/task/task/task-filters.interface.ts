@@ -1,5 +1,5 @@
-import { TaskStatusEnum } from "../../common/enums/task-status.enum";
-import { TaskTypeEnum } from "../../common/enums/task-type.enum";
+import { TaskStatusEnum } from '../../common/enums/task-status.enum';
+import { TaskTypeEnum } from '../../common/enums/task-type.enum';
 
 
 export interface TaskFilters {

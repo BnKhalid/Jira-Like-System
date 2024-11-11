@@ -6,37 +6,6 @@
   "tables": [
     {
       "columns": {
-        "label_content": {
-          "name": "label_content",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        }
-      },
-      "name": "label",
-      "schema": "public",
-      "indexes": [
-        {
-          "keyName": "label_pkey",
-          "columnNames": [
-            "label_content"
-          ],
-          "composite": false,
-          "constraint": true,
-          "primary": true,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "foreignKeys": {},
-      "nativeEnums": {}
-    },
-    {
-      "columns": {
         "user_id": {
           "name": "user_id",
           "type": "varchar(255)",
@@ -530,75 +499,6 @@
     },
     {
       "columns": {
-        "label_label_content": {
-          "name": "label_label_content",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "task_id": {
-          "name": "task_id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        }
-      },
-      "name": "label_tasks",
-      "schema": "public",
-      "indexes": [
-        {
-          "keyName": "label_tasks_pkey",
-          "columnNames": [
-            "label_label_content",
-            "task_id"
-          ],
-          "composite": true,
-          "constraint": true,
-          "primary": true,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "foreignKeys": {
-        "label_tasks_label_label_content_foreign": {
-          "constraintName": "label_tasks_label_label_content_foreign",
-          "columnNames": [
-            "label_label_content"
-          ],
-          "localTableName": "public.label_tasks",
-          "referencedColumnNames": [
-            "label_content"
-          ],
-          "referencedTableName": "public.label",
-          "deleteRule": "cascade",
-          "updateRule": "cascade"
-        },
-        "label_tasks_task_id_foreign": {
-          "constraintName": "label_tasks_task_id_foreign",
-          "columnNames": [
-            "task_id"
-          ],
-          "localTableName": "public.label_tasks",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "public.task",
-          "deleteRule": "cascade",
-          "updateRule": "cascade"
-        }
-      },
-      "nativeEnums": {}
-    },
-    {
-      "columns": {
         "id": {
           "name": "id",
           "type": "varchar(255)",
@@ -812,6 +712,139 @@
             "id"
           ],
           "referencedTableName": "public.sprint",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "content": {
+          "name": "content",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "workspace_id": {
+          "name": "workspace_id",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 255,
+          "mappedType": "string"
+        }
+      },
+      "name": "label",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "label_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "label_workspace_id_foreign": {
+          "constraintName": "label_workspace_id_foreign",
+          "columnNames": [
+            "workspace_id"
+          ],
+          "localTableName": "public.label",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.workspace",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "label_id": {
+          "name": "label_id",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "task_id": {
+          "name": "task_id",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 255,
+          "mappedType": "string"
+        }
+      },
+      "name": "label_tasks",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "label_tasks_pkey",
+          "columnNames": [
+            "label_id",
+            "task_id"
+          ],
+          "composite": true,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "label_tasks_label_id_foreign": {
+          "constraintName": "label_tasks_label_id_foreign",
+          "columnNames": [
+            "label_id"
+          ],
+          "localTableName": "public.label_tasks",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.label",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        },
+        "label_tasks_task_id_foreign": {
+          "constraintName": "label_tasks_task_id_foreign",
+          "columnNames": [
+            "task_id"
+          ],
+          "localTableName": "public.label_tasks",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.task",
+          "deleteRule": "cascade",
           "updateRule": "cascade"
         }
       },

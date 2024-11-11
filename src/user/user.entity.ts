@@ -1,6 +1,5 @@
 import { Entity, PrimaryKey, Property, Collection, OneToMany } from '@mikro-orm/core';
 import { v4 as uuidv4 } from 'uuid';
-import { compare } from 'bcrypt';
 import { Task } from '../task/task/task.entity';
 import { WorkspaceMember } from '../workspace/workspace-member/workspace-member.entity';
 import { IsEmail } from 'class-validator';

@@ -6,7 +6,7 @@ import { TaskLink } from '../task-link/task-link.entity';
 import { TaskTypeEnum } from '../../common/enums/task-type.enum';
 import { TaskStatusEnum } from '../../common/enums/task-status.enum';
 import { TrackedEntity } from '../../common/entities/tracked.entity';
-import { Workspace } from '../../workspace/worksapce/workspace.entity';
+import { Workspace } from '../../workspace/workspace/workspace.entity';
 
 @Entity()
 export class Task extends TrackedEntity {

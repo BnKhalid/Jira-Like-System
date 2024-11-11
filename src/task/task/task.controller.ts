@@ -7,6 +7,8 @@ import { Role } from '../../common/enums/role.enum';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { TaskStatusEnum } from '../../common/enums/task-status.enum';
 import { TaskTypeEnum } from '../../common/enums/task-type.enum';
+import { AddLabelDto } from './dto/add-label-content.dto';
+import { TaskFilters } from './task-filters.interface';
 
 @Controller('api/workspaces/:workspaceId/tasks')
 export class TaskController {
@@ -16,9 +18,19 @@ export class TaskController {
   @Roles(Role.ADMIN)
   create(
     @Param('workspaceId') workspaceId: string,
-    @Body() createTaskDto: CreateTaskDto
+    @Body() createTaskDto: CreateTaskDto,
   ): Promise<Task> {
     return this.taskService.create(workspaceId, createTaskDto);
+  }
+
+  @Post(':taskId/labels')
+  @Roles(Role.ADMIN)
+  addLabel(
+    @Param('workspaceId') workspaceId: string,
+    @Param('taskId') taskId: string,
+    @Body() addLabelDto: AddLabelDto,
+  ): Promise<Task> {
+    return this.taskService.addLabel(workspaceId, taskId, addLabelDto);
   }
 
   @Get()
@@ -30,18 +42,24 @@ export class TaskController {
     @Query('parentTaskId') parentTaskId?: string,
     @Query('assigneeId') assigneeId?: string,
     @Query('reporterId') reporterId?: string,
-    @Query('labels',
-      new ParseArrayPipe({ items: String, separator: ',', optional: true })
-    ) labels?: string[],
+    @Query(
+      'labels',
+      new ParseArrayPipe({ items: String, separator: ',', optional: true }),
+    )
+    labels?: string[],
   ): Promise<Task[]> {
-    return this.taskService.findAll(workspaceId, { status, type, labels, parentTaskId, assigneeId, reporterId });
+    const filters: TaskFilters = {
+      status, type, labels, parentTaskId, assigneeId, reporterId
+    };
+
+    return this.taskService.findAll(workspaceId, filters);
   }
 
   @Get(':taskId')
   @Roles(Role.MEMBER)
   findOne(
     @Param('workspaceId') workspaceId: string,
-    @Param('taskId') taskId: string
+    @Param('taskId') taskId: string,
   ): Promise<Task> {
     return this.taskService.findOne(workspaceId, taskId);
   }
@@ -51,7 +69,7 @@ export class TaskController {
   update(
     @Param('workspaceId') workspaceId: string,
     @Param('taskId') taskId: string,
-    @Body() updateTaskDto: UpdateTaskDto
+    @Body() updateTaskDto: UpdateTaskDto,
   ): Promise<Task> {
     return this.taskService.update(workspaceId, taskId, updateTaskDto);
   }
@@ -60,8 +78,18 @@ export class TaskController {
   @Roles(Role.ADMIN)
   remove(
     @Param('workspaceId') workspaceId: string,
-    @Param('taskId') taskId: string
+    @Param('taskId') taskId: string,
   ): Promise<void> {
     return this.taskService.remove(workspaceId, taskId);
+  }
+
+  @Delete(':taskId/labels/:labelId')
+  @Roles(Role.ADMIN)
+  removeLabel(
+    @Param('workspaceId') workspaceId: string,
+    @Param('taskId') taskId: string,
+    @Param('labelId') labelId: string
+  ): Promise<Task> {
+    return this.taskService.removeLabel(workspaceId, taskId, labelId);
   }
 }

@@ -35,20 +35,19 @@ export class TaskLinkService {
       );
     }
 
-    const incomingLink = new TaskLink();
-    incomingLink.sourceTask = sourceTask;
-    incomingLink.targetTask = targetTask;
-    incomingLink.linkType = createTaskLinkDto.linkType;
+    const incomingLink = this.taskLinkRepository.create({
+      sourceTask,
+      targetTask,
+      linkType: createTaskLinkDto.linkType,
+    });
 
-    const outgoingLink = new TaskLink();
-    outgoingLink.sourceTask = targetTask;
-    outgoingLink.targetTask = sourceTask;
-    outgoingLink.linkType = this.reverseLinkType(createTaskLinkDto.linkType);
+    const outgoingLink = this.taskLinkRepository.create({
+      sourceTask: targetTask,
+      targetTask: sourceTask,
+      linkType: this.reverseLinkType(createTaskLinkDto.linkType),
+    });
 
-    this.taskLinkRepository.create(incomingLink);
-    this.taskLinkRepository.create(outgoingLink);
-
-    await this.em.flush();
+    await this.em.persistAndFlush([incomingLink, outgoingLink]);
 
     return incomingLink;
   }
