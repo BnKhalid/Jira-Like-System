@@ -200,16 +200,6 @@ export class TaskService {
   ): Promise<void> {
     const task = await this.findOne(workspaceId, taskId);
 
-    const children = await this.taskRepository.find(
-      { parentTask: { id: taskId } }
-    );
-
-    for (const child of children) {
-      child.parentTask = null;
-
-      this.em.remove(child);
-    }
-
     await this.em.removeAndFlush(task);
   }
 

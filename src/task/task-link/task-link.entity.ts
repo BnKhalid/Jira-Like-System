@@ -11,9 +11,9 @@ export class TaskLink {
   @Property()
   linkType!: TaskLinkTypeEnum;
 
-  @ManyToOne(() => Task)
+  @ManyToOne(() => Task, { deleteRule: 'cascade' })
   sourceTask!: Task;
 
-  @ManyToOne(() => Task)
+  @ManyToOne(() => Task, { deleteRule: 'cascade' })
   targetTask!: Task;
 }

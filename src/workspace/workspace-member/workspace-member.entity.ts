@@ -15,6 +15,6 @@ export class WorkspaceMember {
   @ManyToOne(() => User)
   user!: User;
 
-  @ManyToOne(() => Workspace)
+  @ManyToOne(() => Workspace, { deleteRule: 'cascade' })
   workspace!: Workspace;
 }

@@ -11,9 +11,13 @@ export class Label {
   @Property({ nullable: false })
   content!: string;
 
-  @ManyToMany(() => Task)
+  @ManyToMany(
+    () => Task,
+    (task) => task.labels,
+    { owner: true }
+  )
   tasks = new Collection<Task>(this);
 
-  @ManyToOne(() => Workspace)
+  @ManyToOne(() => Workspace, { deleteRule: 'cascade' })
   workspace!: Workspace;
 }

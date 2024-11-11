@@ -300,6 +300,16 @@
           "length": 255,
           "mappedType": "string"
         },
+        "workspace_id": {
+          "name": "workspace_id",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 255,
+          "mappedType": "string"
+        },
         "assignee_id": {
           "name": "assignee_id",
           "type": "varchar(255)",
@@ -329,16 +339,6 @@
           "nullable": true,
           "length": 255,
           "mappedType": "string"
-        },
-        "workspace_id": {
-          "name": "workspace_id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
         }
       },
       "name": "task",
@@ -357,6 +357,19 @@
       ],
       "checks": [],
       "foreignKeys": {
+        "task_workspace_id_foreign": {
+          "constraintName": "task_workspace_id_foreign",
+          "columnNames": [
+            "workspace_id"
+          ],
+          "localTableName": "public.task",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.workspace",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        },
         "task_assignee_id_foreign": {
           "constraintName": "task_assignee_id_foreign",
           "columnNames": [
@@ -394,18 +407,6 @@
           ],
           "referencedTableName": "public.task",
           "deleteRule": "set null",
-          "updateRule": "cascade"
-        },
-        "task_workspace_id_foreign": {
-          "constraintName": "task_workspace_id_foreign",
-          "columnNames": [
-            "workspace_id"
-          ],
-          "localTableName": "public.task",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "public.workspace",
           "updateRule": "cascade"
         }
       },
@@ -480,6 +481,7 @@
             "id"
           ],
           "referencedTableName": "public.task",
+          "deleteRule": "cascade",
           "updateRule": "cascade"
         },
         "task_link_target_task_id_foreign": {
@@ -492,6 +494,7 @@
             "id"
           ],
           "referencedTableName": "public.task",
+          "deleteRule": "cascade",
           "updateRule": "cascade"
         }
       },
@@ -606,6 +609,7 @@
             "id"
           ],
           "referencedTableName": "public.workspace",
+          "deleteRule": "cascade",
           "updateRule": "cascade"
         }
       },
@@ -649,7 +653,7 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": true,
+          "nullable": false,
           "length": 255,
           "mappedType": "string"
         },
@@ -700,7 +704,8 @@
             "id"
           ],
           "referencedTableName": "public.task",
-          "deleteRule": "cascade"
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
         },
         "sprint_task_sprint_id_foreign": {
           "constraintName": "sprint_task_sprint_id_foreign",
@@ -712,6 +717,7 @@
             "id"
           ],
           "referencedTableName": "public.sprint",
+          "deleteRule": "cascade",
           "updateRule": "cascade"
         }
       },
@@ -776,6 +782,7 @@
             "id"
           ],
           "referencedTableName": "public.workspace",
+          "deleteRule": "cascade",
           "updateRule": "cascade"
         }
       },
@@ -932,6 +939,7 @@
             "id"
           ],
           "referencedTableName": "public.workspace",
+          "deleteRule": "cascade",
           "updateRule": "cascade"
         }
       },

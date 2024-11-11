@@ -1,4 +1,5 @@
 import { Options, PostgreSqlDriver } from '@mikro-orm/postgresql';
+import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
 import { config as dotenvConfig } from 'dotenv';
 
 dotenvConfig();
@@ -16,7 +17,9 @@ const config: Options = {
     path: './migrations',
     snapshot: true,
     emit: 'ts',
-  }
+  },
+  debug: true,
+  highlighter: new SqlHighlighter(),
 };
 
 export default config;

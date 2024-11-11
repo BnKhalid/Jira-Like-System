@@ -21,13 +21,12 @@ export class Sprint extends TrackedEntity {
   @Property()
   endDate!: Date;
 
-  @ManyToOne(() => Workspace)
+  @ManyToOne(() => Workspace, { deleteRule: 'cascade' })
   workspace!: Workspace;
 
-  @OneToMany(
-    () => SprintTask,
-    (sprintTask) => sprintTask.sprint,
-    { cascade: [Cascade.REMOVE] }
-  )
+  @OneToMany(() => SprintTask, (sprintTask) => sprintTask.sprint, {
+    cascade: [Cascade.ALL],
+    orphanRemoval: true,
+  })
   sprintTasks = new Collection<SprintTask>(this);
 }

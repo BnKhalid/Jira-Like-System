@@ -20,28 +20,28 @@ export class Workspace extends TrackedEntity {
   @OneToMany(
     () => Sprint,
     sprint => sprint.workspace,
-    { cascade: [Cascade.REMOVE] }
+    { cascade: [Cascade.ALL], orphanRemoval: true }
   )
   sprints = new Collection<Sprint>(this);
 
   @OneToMany(
     () => WorkspaceMember,
     workspaceMember => workspaceMember.workspace,
-    { cascade: [Cascade.REMOVE] }
+    { cascade: [Cascade.ALL], orphanRemoval: true }
   )
   workspaceMembers = new Collection<WorkspaceMember>(this);
 
   @OneToMany(
     () => Task,
     task => task.workspace,
-    { cascade: [Cascade.REMOVE] }
+    { cascade: [Cascade.ALL], orphanRemoval: true }
   )
   tasks = new Collection<Task>(this);
 
   @OneToMany(
     () => Label,
     label => label.workspace,
-    { cascade: [Cascade.REMOVE] }
+    { cascade: [Cascade.ALL], orphanRemoval: true }
   )
   labels = new Collection<Label>(this);
 }
