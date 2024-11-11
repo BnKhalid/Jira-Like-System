@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { InjectRepository } from '@mikro-orm/nestjs';
@@ -6,8 +6,9 @@ import { Task } from './task.entity';
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
 import { WorkspaceService } from '../../workspace/worksapce/workspace.service';
 import { UserService } from '../../user/user.service';
-import { TaskStatusEnum } from '../../common/enums/task-status.enum';
 import { User } from '../../user/user.entity';
+import { TaskTypeEnum } from '../../common/enums/task-type.enum';
+import { TaskFilters } from './task-filters.interface';
 
 @Injectable()
 export class TaskService {
@@ -61,16 +62,47 @@ export class TaskService {
       assignee,
       ...createTaskDto,
     });
+
+    this.validateParentTask(task, task.parentTask);
     
     await this.em.persistAndFlush(task);
     
     return task;
   }
 
-  async findAll(workspaceId: string): Promise<Task[]> {
+  async findAll(
+    workspaceId: string,
+    filters: TaskFilters,
+  ): Promise<Task[]> {
+    const criteria: any = { workspace: { id: workspaceId } };
+
+    if (filters.status) {
+      criteria.status = filters.status;
+    }
+
+    if (filters.type) {
+      criteria.type = filters.type;
+    }
+
+    if (filters.parentTaskId) {
+      criteria.parentTask = { id: filters.parentTaskId };
+    }
+
+    if (filters.assigneeId) {
+      criteria.assignee = { id: filters.assigneeId };
+    }
+
+    if (filters.reporterId) {
+      criteria.reporter = { id: filters.reporterId };
+    }
+
+    if (filters.labels && filters.labels.length > 0) {
+      criteria.labels = { labelContent: { $in: filters.labels } };
+    }
+
     return await this.taskRepository.find(
-      { workspace: { id: workspaceId } },
-      { populate: ['assignee', 'labels', 'incomingLinks', 'outgoingLinks', 'labels'] }
+      criteria,
+      { populate: ['assignee', 'labels', 'incomingLinks', 'outgoingLinks'] }
     );
   }
 
@@ -125,6 +157,8 @@ export class TaskService {
 
     if (updateTaskDto.parentTaskId) {
       task.parentTask = await this.findOne(workspaceId, parentTaskId);
+
+      this.validateParentTask(task, task.parentTask);
     }
     else if (updateTaskDto.parentTaskId === null) {
       task.parentTask = null;
@@ -175,5 +209,33 @@ export class TaskService {
     }
 
     await this.em.removeAndFlush(task);
+  }
+
+  private validateParentTask(task: Task, parentTask?: Task): void {
+    if (task.id === parentTask?.id) {
+      throw new BadRequestException('A task cannot be its own parent task.');
+    }
+
+    if (task.type === TaskTypeEnum.EPIC && parentTask) {
+      throw new BadRequestException('An Epic task cannot have a parent task.');
+    }
+
+    if (task.type !== TaskTypeEnum.EPIC && parentTask?.type === TaskTypeEnum.SUB_TASK) {
+      throw new BadRequestException(
+        'User Story, Task and Bug types cannot have a Sub Task as a parent task.',
+      );
+    }
+
+    if (task.type === TaskTypeEnum.SUB_TASK) {
+      if (!parentTask) {
+        throw new BadRequestException('Sub Task must have a parent task.');
+      }
+
+      if (parentTask?.type === TaskTypeEnum.EPIC) {
+        throw new BadRequestException(
+          'Sub Task types cannot have an Epic type as a parent task.',
+        );
+      }
+    }
   }
 }

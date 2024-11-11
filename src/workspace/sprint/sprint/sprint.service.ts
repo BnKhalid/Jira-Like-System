@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSprintDto } from './dto/create-sprint.dto';
 import { UpdateSprintDto } from './dto/update-sprint.dto';
 import { Sprint } from './sprint.entity';
@@ -19,8 +19,12 @@ export class SprintService {
     workspaceId: string,
     createSprintDto: CreateSprintDto
   ): Promise<Sprint> {
+    if (createSprintDto.startDate >= createSprintDto.endDate) {
+      throw new BadRequestException('End date must be after start date');
+    }
+    
     const workspace = await this.workspaceService.findOne(workspaceId);
-
+    
     const sprint = this.sprintRepository.create({
       workspace,
       ...createSprintDto
@@ -63,8 +67,12 @@ export class SprintService {
     sprintId: string,
     updateSprintDto: UpdateSprintDto
   ): Promise<Sprint> {
+    if (updateSprintDto.startDate >= updateSprintDto.endDate) {
+      throw new BadRequestException('End date must be after start date');
+    }
+    
     const sprint = await this.findOne(workspaceId, sprintId);
-
+    
     this.sprintRepository.assign(sprint, updateSprintDto);
 
     await this.em.flush();

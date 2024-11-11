@@ -31,12 +31,4 @@ export class Sprint extends TrackedEntity {
     { cascade: [Cascade.REMOVE] }
   )
   sprintTasks = new Collection<SprintTask>(this);
-
-  @BeforeCreate()
-  @BeforeUpdate()
-  validateDates() {
-    if (this.startDate >= this.endDate) {
-      throw new BadRequestException('End date must be after start date');
-    }
-  }
 }

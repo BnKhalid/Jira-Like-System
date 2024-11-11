@@ -35,16 +35,12 @@ export class WorkspaceService {
   }
 
   async findAll(userId?: string): Promise<Workspace[]> {
-    if (userId) {
-      return await this.workspaceRepository.find(
-        { workspaceMembers: { user: userId } },
-        { populate: ['workspaceMembers', 'tasks', 'sprints'] },
-      );
-    }
+    const criteria = userId ? { workspaceMembers: { user: { id: userId } } } : {};
 
-    return await this.workspaceRepository.findAll({
-      populate: ['workspaceMembers', 'tasks', 'sprints'],
-    });
+    return this.workspaceRepository.find(
+      criteria,
+      { populate: ['workspaceMembers', 'tasks', 'sprints'] }
+    );
   }
 
   async findOne(workspaceId: string): Promise<Workspace> {

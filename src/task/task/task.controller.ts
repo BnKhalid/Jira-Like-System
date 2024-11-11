@@ -1,10 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseArrayPipe } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task } from './task.entity';
 import { Role } from '../../common/enums/role.enum';
 import { Roles } from '../../auth/decorators/roles.decorator';
+import { TaskStatusEnum } from '../../common/enums/task-status.enum';
+import { TaskTypeEnum } from '../../common/enums/task-type.enum';
 
 @Controller('api/workspaces/:workspaceId/tasks')
 export class TaskController {
@@ -22,9 +24,17 @@ export class TaskController {
   @Get()
   @Roles(Role.MEMBER)
   findAll(
-    @Param('workspaceId') workspaceId: string
+    @Param('workspaceId') workspaceId: string,
+    @Query('status') status?: TaskStatusEnum,
+    @Query('type') type?: TaskTypeEnum,
+    @Query('parentTaskId') parentTaskId?: string,
+    @Query('assigneeId') assigneeId?: string,
+    @Query('reporterId') reporterId?: string,
+    @Query('labels',
+      new ParseArrayPipe({ items: String, separator: ',', optional: true })
+    ) labels?: string[],
   ): Promise<Task[]> {
-    return this.taskService.findAll(workspaceId);
+    return this.taskService.findAll(workspaceId, { status, type, labels, parentTaskId, assigneeId, reporterId });
   }
 
   @Get(':taskId')

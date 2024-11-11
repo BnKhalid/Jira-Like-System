@@ -6,6 +6,7 @@ import { SprintService } from '../sprint/sprint.service';
 import { TaskService } from '../../../task/task/task.service';
 import { CreateSprintTaskDto } from './dto/create-sprint-task.dto';
 import { UpdateSprintTaskDto } from './dto/update-sprint-task.dto';
+import { SprintTaskFilters } from './sprint-task.interface';
 
 @Injectable()
 export class SprintTaskService {
@@ -52,10 +53,45 @@ export class SprintTaskService {
 
   async findAll(
     workspaceId: string,
-    sprintId: string
+    sprintId: string,
+    filters: SprintTaskFilters
   ): Promise<SprintTask[]> {
+    const criteria: any = { sprint: { id: sprintId, workspace: { id: workspaceId } } };
+
+    if (filters.status) {
+      criteria.task = { status: filters.status };
+    }
+
+    if (filters.type) {
+      criteria.task = { type: filters.type };
+    }
+
+    if (filters.parentTaskId) {
+      criteria.task = { parentTask: { id: filters.parentTaskId } };
+    }
+
+    if (filters.assigneeId) {
+      criteria.task = { assignee: { id: filters.assigneeId } };
+    }
+
+    if (filters.reporterId) {
+      criteria.task = { reporter: { id: filters.reporterId } };
+    }
+
+    if (filters.labels && filters.labels.length > 0) {
+      criteria.task = { labels: { $in: filters.labels } };
+    }
+
+    if (filters.priority) {
+      criteria.priority = filters.priority;
+    }
+
+    if (filters.storyPointEstimate) {
+      criteria.storyPointEstimate = filters.storyPointEstimate;
+    }
+
     return await this.sprintTaskRepository.find(
-      { sprint: { id: sprintId, workspace: { id: workspaceId } } },
+      criteria,
       { populate: ['task', 'sprint'] }
     );
   }

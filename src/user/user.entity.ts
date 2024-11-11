@@ -34,12 +34,4 @@ export class User {
 
   @OneToMany(() => WorkspaceMember, (workspaceMember) => workspaceMember.user)
   workspaceMemberships = new Collection<WorkspaceMember>(this);
-
-  //#region Helper methods
-
-  validatePassword(password: string): Promise<boolean> {
-    return compare(password, this.password);
-  }
-
-  //#endregion
 }
