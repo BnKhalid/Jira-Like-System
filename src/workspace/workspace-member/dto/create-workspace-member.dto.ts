@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
+import { IsEnum, IsOptional, IsUUID } from 'class-validator';
 import { Role } from '../../../common/enums/role.enum';
 
 export class CreateWorkspaceMemberDto {

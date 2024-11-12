@@ -14,7 +14,6 @@ import { SprintTaskModule } from './workspace/sprint/sprint-task/sprint-task.mod
 import { RolesGuard } from './auth/guards/roles.guard';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
-import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [

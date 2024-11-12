@@ -10,7 +10,7 @@ import { LabelModule } from '../label/label.module';
 
 @Module({
   imports: [
-    MikroOrmModule.forFeature([Task, TaskLink]),
+    MikroOrmModule.forFeature([Task]),
     WorkspaceModule,
     UserModule,
     LabelModule

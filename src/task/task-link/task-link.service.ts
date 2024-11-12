@@ -3,7 +3,7 @@ import { CreateTaskLinkDto } from './dto/create-task-link.dto'
 import { UpdateTaskLinkDto } from './dto/update-task-link.dto';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { TaskLink } from './task-link.entity';
-import { EntityRepository, t } from '@mikro-orm/core';
+import { EntityRepository } from '@mikro-orm/core';
 import { EntityManager } from '@mikro-orm/postgresql';
 import { TaskService } from '../task/task.service';
 import { TaskLinkTypeEnum } from '../../common/enums/task-link-type.enum';

@@ -1,99 +1,113 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# **Jira-Like System**
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A project management tool inspired by Jira, designed to support agile workflows, task dependencies, and user collaboration across multiple workspaces and projects.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## **Table of Contents**
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Project Structure](#project-structure)
+- [API Documentation](#api-documentation)
+- [Testing](#testing)
 
-## Description
+## **Features**
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **User Management**: Role-based access control with roles like Leader, Admin and Members.
+- **Workspace Management**: Organize tasks and sprints within different workspaces.
+- **Task Management**: Task creation, assignment, prioritization and status updates.
+- **Task Linking**: Establish task dependencies, subtasks, and other task relationships.
+- **Sprint Planning**: Support for agile methodologies with Sprint Tasks.
+- **And more...**
 
-## Project setup
+## **Installation**
 
-```bash
-$ npm install
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/BnKhalid/Jira-Like-System.git
+   cd Jira-Like-System
+   ```
+
+2. **Install Dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure Environment Variables**
+   Create a `.env` file in the root directory and add your environment variables:
+   ```plaintext
+    DATABASE_HOST=localhost
+    DATABASE_PORT=5432
+    DATABASE_USER=your_db_user
+    DATABASE_NAME=your_database_name
+
+    JWT_ACCESS_TOKEN_EXPIRES_IN=15m
+    JWT_REFRESH_TOKEN_EXPIRES_IN=7d
+
+    SALT_ROUNDS=number_of_salt_rounds
+   ```
+
+4. **Apply Database Migrations**
+   ```bash
+   npm run migration:up
+   ```
+
+5. **Start the Server**
+   ```bash
+   npm run start:dev
+   ```
+
+   The server will run on `http://localhost:3000` by default.
+
+## **Usage**
+
+1. **API Access**: Use an API client like Postman to interact with the application endpoints.
+2. **Role-based Access Control**: Use with different user roles to test access to various endpoints and permissions.
+
+## **Project Structure**
+
+```
+src/
+├── app.module.ts         # Root module
+├── mikro-orm.config.ts   # MikroORM database configuration
+├── users/                # User module
+├── tasks/                # Task module and realted nested modules
+├── workspaces/           # Workspace module and realted nested modules
+└── ...
 ```
 
-## Compile and run the project
+## **API Documentation**
 
-```bash
-# development
-$ npm run start
+### **Authentication**
+- `POST /auth/signup`: Register a new user.
+- `POST /auth/signin`: Login and receive an access token.
+- `POST /auth/refresh`: Refresh an access token using a refresh token.
 
-# watch mode
-$ npm run start:dev
+### **Workspaces**
+- `POST /workspaces`: Create a new workspace.
+- `GET /workspaces`: List your workspaces.
+- `POST /workspaces/:workspaceId/sprints`: Create a new sprint in a workspace.
+- ...
 
-# production mode
-$ npm run start:prod
-```
+### **Tasks**
+- `POST /workspaces/:workspaceId/tasks`: Create a new task.
+- `GET /workspaces/:workspaceId/tasks`: List workspace tasks with various filters.
+- `PATCH /workspaces/:workspaceId/tasks/:id`: Update a task’s details.
+- `DELETE /workspaces/:workspaceId/tasks/:id`: Delete a task.
+- ...
 
-## Run tests
+### **Task Linking and Dependencies**
+- `POST /tasks/:id/link`: Link a task to another (e.g., setting dependencies).
+- `POST /tasks/:id/label`: Create a task label for modularity.
+- ...
 
-```bash
-# unit tests
-$ npm run test
+## **Testing**
 
-# e2e tests
-$ npm run test:e2e
+Testing is conducted using Postman. Download the Postman collection and use environment variables to simulate API interactions.
 
-# test coverage
-$ npm run test:cov
-```
+1. **Setting Up Postman**:
+   - Configure variables like `baseURL` and `Authorization` token.
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+2. **Executing Tests**:
+   - **CRUD Operations**: Test CRUD for each entity.
+   - **Task Linking**: Test linking tasks and setting dependencies.
+   - **Error Handling**: Verify responses for invalid requests.
