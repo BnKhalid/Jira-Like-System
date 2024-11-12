@@ -35,11 +35,13 @@ A project management tool inspired by Jira, designed to support agile workflows,
 3. **Configure Environment Variables**
    Create a `.env` file in the root directory and add your environment variables:
    ```plaintext
-    DATABASE_HOST=localhost
-    DATABASE_PORT=5432
-    DATABASE_USER=your_db_user
-    DATABASE_NAME=your_database_name
+    DB_HOST=localhost
+    DB_PORT=5432
+    DB_NAME=your_db_name
+    DB_USER=your_db_user
+    DB_PASSWORD=your_db_password
 
+    JWT_SECRET=your_jwt_secret
     JWT_ACCESS_TOKEN_EXPIRES_IN=15m
     JWT_REFRESH_TOKEN_EXPIRES_IN=7d
 
